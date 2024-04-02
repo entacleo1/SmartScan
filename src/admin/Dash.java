@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javaapplication20.*;
@@ -23,15 +24,30 @@ public class Dash extends javax.swing.JFrame {
         initComponents();
         date();
         time();
+        name();
     }
 
-    
-    
+ 
+      private void name(){
+        dbconnector db = new dbconnector();
+        try{
+        Statement stmt = db.connect.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM tbl_stake");
+        
+        while(rs.next()){
+           String name = rs.getString("name");
+            
+           lblname.setText(name);
+        }
+      }catch(SQLException ex){
+            System.out.println("Error");
+      }
+    }
     
    
    
    
-    public void date(){
+    private void date(){
         
         Date d = new Date();
         
@@ -45,7 +61,7 @@ public class Dash extends javax.swing.JFrame {
         Timer t;
         SimpleDateFormat st;
     
-    public void time(){
+    private void time(){
 
         t = new Timer(0, new ActionListener() {
             @Override
@@ -231,6 +247,7 @@ public class Dash extends javax.swing.JFrame {
     private void navstudMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_navstudMouseClicked
         addstud op = new addstud();
         op.setVisible(true);
+        
     }//GEN-LAST:event_navstudMouseClicked
 
     private void navmanageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_navmanageMouseClicked

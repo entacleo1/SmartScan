@@ -21,7 +21,7 @@ public class dbconnector {
         
         
             try{
-                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/rfid", "root", "");
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/RFID", "root", "");
             }catch(SQLException ex){
                     System.out.println("Can't connect to database: "+ex.getMessage());
             }

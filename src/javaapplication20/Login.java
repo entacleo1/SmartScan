@@ -8,16 +8,33 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
+
 public class Login extends javax.swing.JFrame {
 
     public Login() {
-        initComponents();
-    }
+        initComponents(); 
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_F1) {
+                    tag op = new tag();
+                    op.setVisible(true);
+                     dispose();       
+                }
+            }
+        });
+             
+        setFocusable(true);
+       
+    } 
+     
+  
+    
     
     public static boolean loginAcc(String user, String pass){
         dbconnector connector = new dbconnector();
         try{
-            String query = "SELECT * FROM tbl_stake  WHERE u_user = '" + user + "' AND u_pass = '" + pass + "'";
+            String query = "SELECT * FROM tbl_stake  WHERE user = '" + user + "' AND pass = '" + pass + "'";
             ResultSet resultSet = connector.getData(query);
             return resultSet.next();
         }catch (SQLException ex) {

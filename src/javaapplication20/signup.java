@@ -24,7 +24,7 @@ public class signup extends javax.swing.JFrame {
     public static boolean idValid(String id){
         dbconnector connector = new dbconnector();
         try{
-            String query = "SELECT * FROM tbl_stake  WHERE u_id = '" + id +"'";
+            String query = "SELECT * FROM tbl_stake  WHERE id = '" + id +"'";
             ResultSet resultSet = connector.getData(query);
             return resultSet.next();
         }catch (SQLException ex) {
@@ -35,7 +35,7 @@ public class signup extends javax.swing.JFrame {
      public static boolean userValid(String user){
         dbconnector connector = new dbconnector();
         try{
-            String query = "SELECT * FROM tbl_stake  WHERE u_user = '" + user +"'";
+            String query = "SELECT * FROM tbl_stake  WHERE user = '" + user +"'";
             ResultSet resultSet = connector.getData(query);
             return resultSet.next();
         }catch (SQLException ex) {
@@ -170,7 +170,7 @@ public class signup extends javax.swing.JFrame {
             String user = txtuser.getText();
             String pass = txtpass.getText();
                     
-             String sql = "INSERT INTO tbl_stake(u_id, u_tag, u_name, u_last, u_user, u_pass) VALUES ('"+id+"','"+tag+"','"+name+"','"+last+"','"+user+"','"+pass+"')" ;
+             String sql = "INSERT INTO tbl_stake(id, tag, name, last, user, pass) VALUES ('"+id+"','"+tag+"','"+name+"','"+last+"','"+user+"','"+pass+"')" ;
              
             Statement stmt = con.connect.createStatement();
             int rowsAffected = stmt.executeUpdate(sql);

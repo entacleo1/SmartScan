@@ -25,7 +25,7 @@ public class tag extends javax.swing.JFrame {
      public static boolean loginAcc(String tag){
         dbconnector connector = new dbconnector();
         try{
-            String query = "SELECT * FROM tbl_stake  WHERE u_tag = '" + tag + "'";
+            String query = "SELECT * FROM tbl_stake  WHERE tag = '" + tag + "'";
             ResultSet resultSet = connector.getData(query);
             return resultSet.next();
         }catch (SQLException ex) {

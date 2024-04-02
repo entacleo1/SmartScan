@@ -1,6 +1,14 @@
 
 package Students;
 
+import config.dbconnector;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author entac
@@ -10,9 +18,72 @@ public class addstud extends javax.swing.JFrame {
     /**
      * Creates new form addstud
      */
-    public addstud() {
+    dbconnector db = new dbconnector();
+    
+    public addstud(){
         initComponents();
+        tb();
+        filter();
     }
+    
+    
+    private void filter(){
+       
+        
+        try{
+        Statement st = db.connect.createStatement();
+       ResultSet rs = st.executeQuery("SELECT * FROM tbl_students");
+       
+       
+       
+       while(rs.next()){
+           
+           String grade = rs.getString("s_grade");
+           String sec = rs.getString("s_section");
+           section.addItem(sec);
+           gradelvl.addItem(grade);
+           
+       }
+      }catch(SQLException ex){
+           System.out.println("Error");
+          
+      }
+    }
+    
+
+    private void tb() {
+   
+
+    try {
+        Statement st = db.connect.createStatement();
+        String sql = "SELECT * FROM tbl_students";
+        ResultSet res = db.getData(sql);
+
+        while (res.next()) {
+
+            String id = String.valueOf(res.getString("s_id"));
+            String tag = res.getString("s_tag");
+            String last = res.getString("s_last");
+            String mid = res.getString("s_mi");
+            String first = res.getString("s_name");
+            String dob = res.getString("s_bday");
+            String sex = res.getString("s_gender"); 
+            String mobile = res.getString("s_mobile");
+            String guard = res.getString("s_guard");
+            String home = res.getString("s_add");
+
+            String table[] = {id,tag,last,mid,first,dob,sex,mobile,guard,home};
+
+            DefaultTableModel tblmod = (DefaultTableModel)studlist.getModel();
+            tblmod.addRow(table);
+
+        }
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+    }
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,7 +104,7 @@ public class addstud extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         add = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        studlist = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -57,13 +128,18 @@ public class addstud extends javax.swing.JFrame {
         jLabel2.setText("Student MasterList");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        jPanel1.add(section, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 90, -1));
+        jPanel1.add(section, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 120, -1));
 
-        jPanel1.add(gradelvl, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 90, -1));
-        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 200, -1));
+        gradelvl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gradelvlActionPerformed(evt);
+            }
+        });
+        jPanel1.add(gradelvl, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 100, -1));
+        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, 200, -1));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/search.png"))); // NOI18N
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 60, 30, 20));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 60, 30, 20));
 
         add.setText("[Add Student]");
         add.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -73,36 +149,48 @@ public class addstud extends javax.swing.JFrame {
         });
         jPanel1.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 70, -1, -1));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        studlist.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Tag#", "Last Name", "M.I", "First Name", "DOB", "Gender", "Mobile", "Guardian", "Address"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(studlist);
+        if (studlist.getColumnModel().getColumnCount() > 0) {
+            studlist.getColumnModel().getColumn(0).setPreferredWidth(30);
+            studlist.getColumnModel().getColumn(3).setPreferredWidth(10);
+            studlist.getColumnModel().getColumn(4).setPreferredWidth(50);
+            studlist.getColumnModel().getColumn(5).setPreferredWidth(20);
+            studlist.getColumnModel().getColumn(6).setPreferredWidth(10);
+            studlist.getColumnModel().getColumn(7).setPreferredWidth(20);
+            studlist.getColumnModel().getColumn(8).setPreferredWidth(30);
+            studlist.getColumnModel().getColumn(9).setPreferredWidth(50);
+        }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 7, Short.MAX_VALUE))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         setSize(new java.awt.Dimension(880, 439));
@@ -119,6 +207,10 @@ public class addstud extends javax.swing.JFrame {
        op.setVisible(true);
        this.dispose();
     }//GEN-LAST:event_addMouseClicked
+
+    private void gradelvlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradelvlActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_gradelvlActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,9 +255,9 @@ public class addstud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblback;
     private javax.swing.JComboBox<String> section;
+    private javax.swing.JTable studlist;
     private javax.swing.JTextField txtsearch;
     // End of variables declaration//GEN-END:variables
 }

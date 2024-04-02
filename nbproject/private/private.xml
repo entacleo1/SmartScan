@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/javaapplication20/tag.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>27</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/CODES/OOP/RFID/src/config/dbconnector.java</file>
             <file>file:/D:/CODES/OOP/RFID/src/javaapplication20/signup.java</file>
             <file>file:/D:/CODES/OOP/RFID/src/admin/Dash.java</file>
+            <file>file:/D:/CODES/OOP/RFID/src/Students/addstud.java</file>
+            <file>file:/D:/CODES/OOP/RFID/src/Students/newstud.java</file>
             <file>file:/D:/CODES/OOP/RFID/src/javaapplication20/Login.java</file>
             <file>file:/D:/CODES/OOP/RFID/src/javaapplication20/tag.java</file>
         </group>
