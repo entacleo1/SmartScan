@@ -19,6 +19,9 @@ public class newstud extends javax.swing.JFrame {
     /**
      * Creates new form newstud
      */
+    
+    public String gender;
+    
     public newstud() {
         initComponents();
     }
@@ -57,14 +60,15 @@ public class newstud extends javax.swing.JFrame {
         txtlast = new javax.swing.JTextField();
         txtmid = new javax.swing.JTextField();
         txtname = new javax.swing.JTextField();
-        txtdob = new javax.swing.JTextField();
-        txtgender = new javax.swing.JTextField();
         txtguard = new javax.swing.JTextField();
         txtmobile = new javax.swing.JTextField();
         txtadd = new javax.swing.JTextField();
         txtgrade = new javax.swing.JTextField();
+        txtdate = new javax.swing.JTextField();
         save = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        male = new javax.swing.JRadioButton();
+        female = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,12 +146,13 @@ public class newstud extends javax.swing.JFrame {
         jPanel2.add(txtlast, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 160, 258, 29));
         jPanel2.add(txtmid, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, 258, 29));
         jPanel2.add(txtname, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 258, 29));
-        jPanel2.add(txtdob, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 258, 29));
-        jPanel2.add(txtgender, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 320, 258, 29));
         jPanel2.add(txtguard, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, 247, 31));
         jPanel2.add(txtmobile, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 120, 247, 31));
         jPanel2.add(txtadd, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 160, 247, 60));
         jPanel2.add(txtgrade, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 270, 247, 31));
+
+        txtdate.setText("jTextField1");
+        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 250, 30));
 
         save.setText("Save");
         save.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -164,6 +169,22 @@ public class newstud extends javax.swing.JFrame {
             }
         });
         jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 350, -1, -1));
+
+        male.setText("Male");
+        male.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maleActionPerformed(evt);
+            }
+        });
+        jPanel2.add(male, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, -1, -1));
+
+        female.setText("Female");
+        female.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                femaleActionPerformed(evt);
+            }
+        });
+        jPanel2.add(female, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 330, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -206,14 +227,12 @@ public class newstud extends javax.swing.JFrame {
             String mid  = txtmid.getText();
             String first = txtname.getText();
             String grade = txtgrade.getText();
-            String sec = txtsec.getText();
-            String dob	= txtdob.getText();
-            String sex = txtgender.getText();
+            String sec = txtsec.getText(); 
             String guard = txtguard.getText();
             String mobile = txtmobile.getText();
             String add = txtadd.getText();
             
-            String sql = "INSERT INTO tbl_students(s_id, s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add) VALUES ('"+id+"','"+tag+"','"+last+"','"+mid+"','"+first+"','"+sec+"','"+grade+"','"+dob+"','"+sex+"','"+mobile+"','"+guard+"','"+add+"')";
+            String sql = "INSERT INTO tbl_students(s_id, s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add) VALUES ('"+id+"','"+tag+"','"+last+"','"+mid+"','"+first+"','"+sec+"','"+grade+"','"+dob+"','"+gender+"','"+mobile+"','"+guard+"','"+add+"')";
            
             Statement stmt = con.connect.createStatement();
             int row = stmt.executeUpdate(sql);
@@ -228,8 +247,6 @@ public class newstud extends javax.swing.JFrame {
                 txtname.setText("");
                 txtgrade.setText("");
                 txtsec.setText("");
-                txtdob.setText("");
-                txtgender.setText("");
                 txtguard.setText("");
                 txtmobile.setText("");
                 txtadd.setText("");     
@@ -250,6 +267,28 @@ public class newstud extends javax.swing.JFrame {
         op.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void femaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_femaleActionPerformed
+       male.setSelected(false);
+      
+      if(female.isSelected()){
+          gender = "Female";
+      }else{
+          gender = null;
+      }
+     
+    }//GEN-LAST:event_femaleActionPerformed
+
+    private void maleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maleActionPerformed
+      female.setSelected(false);
+      
+      if(male.isSelected()){
+          gender = "Male";
+      }else{
+          gender = null;
+      }
+     
+    }//GEN-LAST:event_maleActionPerformed
 
     /**
      * @param args the command line arguments
@@ -287,6 +326,7 @@ public class newstud extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton female;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -307,10 +347,10 @@ public class newstud extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbl;
     private javax.swing.JLabel lblback;
+    private javax.swing.JRadioButton male;
     private javax.swing.JButton save;
     private javax.swing.JTextField txtadd;
-    private javax.swing.JTextField txtdob;
-    private javax.swing.JTextField txtgender;
+    private javax.swing.JTextField txtdate;
     private javax.swing.JTextField txtgrade;
     private javax.swing.JTextField txtguard;
     private javax.swing.JTextField txtid;

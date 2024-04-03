@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.proteanit.sql.DbUtils;
 
 
 /**
@@ -24,10 +25,11 @@ public class addstud extends javax.swing.JFrame {
         initComponents();
         tb();
         filter();
+        
     }
     
     
-    private void filter(){
+ private void filter(){
        
         
         try{
@@ -50,7 +52,8 @@ public class addstud extends javax.swing.JFrame {
       }
     }
     
-
+     
+    
     private void tb() {
    
 
@@ -103,6 +106,7 @@ public class addstud extends javax.swing.JFrame {
         txtsearch = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         add = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         studlist = new javax.swing.JTable();
 
@@ -136,6 +140,12 @@ public class addstud extends javax.swing.JFrame {
             }
         });
         jPanel1.add(gradelvl, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 100, -1));
+
+        txtsearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtsearchActionPerformed(evt);
+            }
+        });
         jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, 200, -1));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/search.png"))); // NOI18N
@@ -148,6 +158,14 @@ public class addstud extends javax.swing.JFrame {
             }
         });
         jPanel1.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 70, -1, -1));
+
+        jLabel4.setText("Delete Student");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 70, -1, -1));
 
         studlist.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -182,15 +200,17 @@ public class addstud extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 11, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         setSize(new java.awt.Dimension(880, 439));
@@ -211,6 +231,15 @@ public class addstud extends javax.swing.JFrame {
     private void gradelvlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradelvlActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_gradelvlActionPerformed
+
+    private void txtsearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtsearchActionPerformed
+       
+    }//GEN-LAST:event_txtsearchActionPerformed
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+      
+       
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -253,6 +282,7 @@ public class addstud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblback;
