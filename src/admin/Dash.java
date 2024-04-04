@@ -299,7 +299,7 @@ public class Dash extends javax.swing.JFrame {
     private javax.swing.JLabel lbllogout2;
     private javax.swing.JLabel lbllogout3;
     private javax.swing.JLabel lbllogout4;
-    private javax.swing.JLabel lblname;
+    public javax.swing.JLabel lblname;
     private javax.swing.JPanel navdash;
     private javax.swing.JPanel navmanage;
     private javax.swing.JPanel navstud;

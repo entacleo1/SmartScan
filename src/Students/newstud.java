@@ -5,7 +5,9 @@
  */
 package Students;
 
+import com.toedter.calendar.JTextFieldDateEditor;
 import config.dbconnector;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
@@ -21,9 +23,12 @@ public class newstud extends javax.swing.JFrame {
      */
     
     public String gender;
+    public String action;
+    dbconnector con = new dbconnector();
     
     public newstud() {
         initComponents();
+        gradesel();
     }
 
     /**
@@ -56,19 +61,19 @@ public class newstud extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         txttag = new javax.swing.JTextField();
         txtid = new javax.swing.JTextField();
-        txtsec = new javax.swing.JTextField();
         txtlast = new javax.swing.JTextField();
         txtmid = new javax.swing.JTextField();
         txtname = new javax.swing.JTextField();
         txtguard = new javax.swing.JTextField();
         txtmobile = new javax.swing.JTextField();
         txtadd = new javax.swing.JTextField();
-        txtgrade = new javax.swing.JTextField();
-        txtdate = new javax.swing.JTextField();
         save = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         male = new javax.swing.JRadioButton();
         female = new javax.swing.JRadioButton();
+        txtbday = new com.toedter.calendar.JDateChooser();
+        txtgrade = new javax.swing.JComboBox<>();
+        txtsec = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,19 +147,14 @@ public class newstud extends javax.swing.JFrame {
         jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 310, -1, 20));
         jPanel2.add(txttag, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, 258, 31));
         jPanel2.add(txtid, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 258, 29));
-        jPanel2.add(txtsec, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 310, 247, 31));
         jPanel2.add(txtlast, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 160, 258, 29));
         jPanel2.add(txtmid, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, 258, 29));
         jPanel2.add(txtname, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 258, 29));
         jPanel2.add(txtguard, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, 247, 31));
         jPanel2.add(txtmobile, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 120, 247, 31));
         jPanel2.add(txtadd, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 160, 247, 60));
-        jPanel2.add(txtgrade, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 270, 247, 31));
 
-        txtdate.setText("jTextField1");
-        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 250, 30));
-
-        save.setText("Save");
+        save.setText("label");
         save.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 saveMouseClicked(evt);
@@ -186,6 +186,14 @@ public class newstud extends javax.swing.JFrame {
         });
         jPanel2.add(female, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 330, -1, -1));
 
+        txtbday.setDateFormatString("yyyy-MM-dd");
+        jPanel2.add(txtbday, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 260, 30));
+
+        txtgrade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        jPanel2.add(txtgrade, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 270, 200, 30));
+
+        jPanel2.add(txtsec, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 310, 200, 30));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -206,6 +214,25 @@ public class newstud extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void gradesel(){
+        try{
+           Statement st = con.connect.createStatement();
+           ResultSet rs = st.executeQuery("SELECT * FROM tbl_gradelvl");
+           
+           while(rs.next()){
+           String grade = rs.getString("lvl");
+           String sec = rs.getString("section");
+           
+           txtgrade.addItem(grade);
+           txtsec.addItem(sec);
+           }
+        }catch(SQLException ex){
+            
+            JOptionPane.showMessageDialog(null,"Error" + ex.getMessage());
+        }
+            
+    }
+    
     private void lblbackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblbackMouseClicked
       addstud op = new addstud();
       
@@ -215,50 +242,52 @@ public class newstud extends javax.swing.JFrame {
     }//GEN-LAST:event_lblbackMouseClicked
 
     private void saveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveMouseClicked
-     
-        dbconnector con = new dbconnector();
-        
-        try{
-            
-            
-            String tag = txttag.getText();
-            String id = txtid.getText();
-            String last	= txtlast.getText();
-            String mid  = txtmid.getText();
-            String first = txtname.getText();
-            String grade = txtgrade.getText();
-            String sec = txtsec.getText(); 
-            String guard = txtguard.getText();
-            String mobile = txtmobile.getText();
-            String add = txtadd.getText();
-            
-            String sql = "INSERT INTO tbl_students(s_id, s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add) VALUES ('"+id+"','"+tag+"','"+last+"','"+mid+"','"+first+"','"+sec+"','"+grade+"','"+dob+"','"+gender+"','"+mobile+"','"+guard+"','"+add+"')";
-           
-            Statement stmt = con.connect.createStatement();
-            int row = stmt.executeUpdate(sql);
-            
-            if(row > 0 ){
-                JOptionPane.showMessageDialog(null,"Student Saved");
+        switch (action) {
+            case "Add":
+                try{
+                    
+                    String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
+                    
+                    
+                    String sql = "INSERT INTO tbl_students(s_id, s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add) VALUES ('"+txtid.getText()+"','"+txttag.getText()+"','"+txtlast.getText()+"','"+txtmid.getText()+"','"+txtname.getText()+"','"+txtsec.getSelectedItem()+"','"+txtgrade.getSelectedItem()+"','"+bday+"','"+gender+"','"+txtmobile.getText()+"','"+txtguard.getText()+"','"+txtadd.getText()+"')";
+                    
+                    Statement stmt = con.connect.createStatement();
+                    int row = stmt.executeUpdate(sql);
+                    
+                    if(row > 0 ){
+                        JOptionPane.showMessageDialog(null,"Student Saved");
+                        
+                        txtsec.removeAllItems();
+                        txttag.setText("");
+                        txtid.setText("");
+                        txtlast.setText("");
+                        txtmid.setText("");
+                        txtname.setText("");
+                        txtguard.setText("");
+                        txtmobile.setText("");
+                        txtadd.setText("");
+                    }else{
+                        JOptionPane.showMessageDialog(null,"Null");
+                    }
+                    
+                }catch(SQLException ex){
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }       
                 
-                txttag.setText("");
-                txtid.setText("");
-                txtlast.setText("");
-                txtmid.setText("");
-                txtname.setText("");
-                txtgrade.setText("");
-                txtsec.setText("");
-                txtguard.setText("");
-                txtmobile.setText("");
-                txtadd.setText("");     
-            }else{
-                JOptionPane.showMessageDialog(null,"Null");
-            }
-            
-       }catch(SQLException ex){
-          JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
-           
-       }
-           
+                break;
+                
+            case "Update":
+                String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
+                con.update("UPDATE tbl_students SET  s_tag  ='"+txttag.getText()+"', s_last ='"+txtlast.getText()+"', s_mi  ='"+txtmid.getText()+"', s_name  ='"+txtname.getText()+"', s_section  ='"+txtsec.getSelectedItem()+"', s_grade  ='"+txtgrade.getSelectedItem()+"', s_bday  ='"+bday+"', s_gender  ='"+gender+"',s_mobile  ='"+txtmobile.getText()+"', s_guard  ='"+txtguard.getText()+"', s_add  ='"+txtadd.getText()+"' WHERE s_id = '"+txtid.getText()+"'");
+                
+                
+                break;
+                
+            default:
+                JOptionPane.showMessageDialog(null,"No Action Selected");
+                break;
+        }
+     
     }//GEN-LAST:event_saveMouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
@@ -326,7 +355,7 @@ public class newstud extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton female;
+    public javax.swing.JRadioButton female;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -344,21 +373,21 @@ public class newstud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    public javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbl;
     private javax.swing.JLabel lblback;
-    private javax.swing.JRadioButton male;
-    private javax.swing.JButton save;
-    private javax.swing.JTextField txtadd;
-    private javax.swing.JTextField txtdate;
-    private javax.swing.JTextField txtgrade;
-    private javax.swing.JTextField txtguard;
-    private javax.swing.JTextField txtid;
-    private javax.swing.JTextField txtlast;
-    private javax.swing.JTextField txtmid;
-    private javax.swing.JTextField txtmobile;
-    private javax.swing.JTextField txtname;
-    private javax.swing.JTextField txtsec;
-    private javax.swing.JTextField txttag;
+    public javax.swing.JRadioButton male;
+    public javax.swing.JButton save;
+    public javax.swing.JTextField txtadd;
+    public com.toedter.calendar.JDateChooser txtbday;
+    public javax.swing.JComboBox<String> txtgrade;
+    public javax.swing.JTextField txtguard;
+    public javax.swing.JTextField txtid;
+    public javax.swing.JTextField txtlast;
+    public javax.swing.JTextField txtmid;
+    public javax.swing.JTextField txtmobile;
+    public javax.swing.JTextField txtname;
+    public javax.swing.JComboBox<String> txtsec;
+    public javax.swing.JTextField txttag;
     // End of variables declaration//GEN-END:variables
 }

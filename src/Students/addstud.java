@@ -5,8 +5,16 @@ import config.dbconnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import net.proteanit.sql.DbUtils;
 
 
@@ -34,14 +42,14 @@ public class addstud extends javax.swing.JFrame {
         
         try{
         Statement st = db.connect.createStatement();
-       ResultSet rs = st.executeQuery("SELECT * FROM tbl_students");
+        ResultSet rs = st.executeQuery("SELECT * FROM tbl_gradelvl");
        
        
        
        while(rs.next()){
            
-           String grade = rs.getString("s_grade");
-           String sec = rs.getString("s_section");
+           String grade = rs.getString("lvl");
+           String sec = rs.getString("section");
            section.addItem(sec);
            gradelvl.addItem(grade);
            
@@ -59,7 +67,7 @@ public class addstud extends javax.swing.JFrame {
 
     try {
         Statement st = db.connect.createStatement();
-        String sql = "SELECT * FROM tbl_students";
+        String sql = "SELECT * FROM tbl_students ORDER BY s_last";
         ResultSet res = db.getData(sql);
 
         while (res.next()) {
@@ -106,7 +114,9 @@ public class addstud extends javax.swing.JFrame {
         txtsearch = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         add = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        del = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        refresh = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         studlist = new javax.swing.JTable();
 
@@ -146,26 +156,47 @@ public class addstud extends javax.swing.JFrame {
                 txtsearchActionPerformed(evt);
             }
         });
-        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, 200, -1));
+        txtsearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtsearchKeyReleased(evt);
+            }
+        });
+        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 60, 200, -1));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/search.png"))); // NOI18N
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 60, 30, 20));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 60, 30, 20));
 
-        add.setText("[Add Student]");
+        add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/stud.png"))); // NOI18N
         add.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 addMouseClicked(evt);
             }
         });
-        jPanel1.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 70, -1, -1));
+        jPanel1.add(add, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 50, 30, 30));
 
-        jLabel4.setText("Delete Student");
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        del.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/delete.png"))); // NOI18N
+        del.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+                delMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 70, -1, -1));
+        jPanel1.add(del, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 50, 30, 30));
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/update.png"))); // NOI18N
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 50, 30, 30));
+
+        refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/re.png"))); // NOI18N
+        refresh.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshMouseClicked(evt);
+            }
+        });
+        jPanel1.add(refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 50, -1, -1));
 
         studlist.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -200,17 +231,15 @@ public class addstud extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         setSize(new java.awt.Dimension(880, 439));
@@ -222,10 +251,14 @@ public class addstud extends javax.swing.JFrame {
     }//GEN-LAST:event_lblbackMouseClicked
 
     private void addMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addMouseClicked
-       newstud op = new newstud();
-       
-       op.setVisible(true);
-       this.dispose();
+        newstud stud = new newstud();   
+        
+        stud.setVisible(true);
+        JFrame mainFrame = (JFrame)SwingUtilities.getWindowAncestor(this);
+        this.dispose();
+        
+        stud.action = "Add";
+        stud.save.setText("Add");
     }//GEN-LAST:event_addMouseClicked
 
     private void gradelvlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradelvlActionPerformed
@@ -236,10 +269,81 @@ public class addstud extends javax.swing.JFrame {
        
     }//GEN-LAST:event_txtsearchActionPerformed
 
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-      
+    private void delMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_delMouseClicked
+      int row = studlist.getSelectedRow();
+      if(row < 0){
+          JOptionPane.showMessageDialog(null,"Select Item");
+      }else{
+          TableModel model = studlist.getModel();
+          Object val = model.getValueAt(row, 0);
+          String id = val.toString();
+          int a = JOptionPane.showConfirmDialog(null,"Are you Sure You want to Delete ID " + id , "Select", JOptionPane.YES_NO_OPTION);
+          if( a == 0){
+              int s_id = Integer.parseInt(id);
+              db.delete(s_id, "tbl_students");
+          }
+      }
        
-    }//GEN-LAST:event_jLabel4MouseClicked
+    }//GEN-LAST:event_delMouseClicked
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+        
+        int row = studlist.getSelectedRow();
+        
+        if(row < 0){
+            JOptionPane.showMessageDialog(null, "Select Item");
+        }else{
+            TableModel model = studlist.getModel();
+            
+            newstud stud = new newstud();
+            
+            stud.txtid.setText(""+model.getValueAt(row, 0));
+            stud.txttag.setText(""+model.getValueAt(row, 1));
+            stud.txtlast.setText(""+model.getValueAt(row, 2));
+            stud.txtmid.setText(""+model.getValueAt(row, 3));
+            stud.txtname.setText(""+model.getValueAt(row, 4));
+           
+            String dateString = model.getValueAt(row, 5).toString(); 
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                
+            Date bdayDate = dateFormat.parse(dateString);
+            stud.txtbday.setDate(bdayDate);
+            
+            } catch (ParseException e) {
+                 e.printStackTrace();
+                 
+             }
+   
+            
+            stud.gender = model.getValueAt(row, 6).toString();
+            stud.txtmobile.setText(""+model.getValueAt(row, 7));
+            stud.txtguard.setText(""+model.getValueAt(row, 8));
+            stud.txtadd.setText(""+model.getValueAt(row, 9));
+            stud.action = "Update";
+            stud.save.setText("Update");
+            stud.setVisible(true);
+            JFrame mainFrame = (JFrame)SwingUtilities.getWindowAncestor(this);
+            this.dispose();
+            
+            
+        }
+    }//GEN-LAST:event_jLabel5MouseClicked
+
+    private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
+       DefaultTableModel model = (DefaultTableModel)studlist.getModel();
+       model.setRowCount(0);
+       tb();
+    }//GEN-LAST:event_refreshMouseClicked
+
+    private void txtsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsearchKeyReleased
+       
+        DefaultTableModel src = (DefaultTableModel)studlist.getModel();
+        TableRowSorter<DefaultTableModel> sr = new TableRowSorter<>(src);
+        studlist.setRowSorter(sr);
+        sr.setRowFilter(RowFilter.regexFilter(txtsearch.getText()));
+        
+    }//GEN-LAST:event_txtsearchKeyReleased
 
     /**
      * @param args the command line arguments
@@ -278,14 +382,16 @@ public class addstud extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel add;
+    private javax.swing.JLabel del;
     private javax.swing.JComboBox<String> gradelvl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblback;
+    private javax.swing.JLabel refresh;
     private javax.swing.JComboBox<String> section;
     private javax.swing.JTable studlist;
     private javax.swing.JTextField txtsearch;
