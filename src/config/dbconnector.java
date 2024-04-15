@@ -67,9 +67,9 @@ public class dbconnector {
         }
         
         //delete
-        public void delete(int id, String table){
+        public void delete(int id, String table, String tblid){
             try{
-                PreparedStatement pst = connect.prepareStatement("DELETE FROM tbl_students WHERE s_id = ?");
+                PreparedStatement pst = connect.prepareStatement("DELETE FROM "+table+" WHERE "+tblid+" = ? ");
                 pst.setInt(1, id);
                 int row = pst.executeUpdate();
                 if(row > 0 ){

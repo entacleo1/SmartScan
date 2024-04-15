@@ -6,6 +6,8 @@ import config.dbconnector;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 
@@ -18,8 +20,23 @@ public class tag extends javax.swing.JFrame {
     /**
      * Creates new form tag
      */
+    
+    public dbconnector db = new dbconnector();
     public tag() {
         initComponents();
+       addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                  new Login().setVisible(true);
+                  
+                     dispose();       
+                }
+            }
+        });
+             
+       setFocusable(true);
+                
     }
     
      public static boolean loginAcc(String tag){
@@ -33,6 +50,7 @@ public class tag extends javax.swing.JFrame {
         }
 
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -104,12 +122,23 @@ public class tag extends javax.swing.JFrame {
         if(evt.getKeyCode() == KeyEvent.VK_ENTER ){
             if(loginAcc(txttag.getText())){
                 Dash op = new Dash();
-                Login lo = new Login();
-                
-                JOptionPane.showMessageDialog(null, "Loged In");
-                op.setVisible(true);
-        
-                this.dispose();   
+               try {
+                     String sq = "SELECT * FROM tbl_stake WHERE tag = '" +txttag.getText()+ "'";
+                     ResultSet res = db.getData(sq);
+                     if(res.next()){
+                         String n = res.getString("name");
+                         String l = res.getString("last");
+                         op.lblname.setText("<html><body><center>"+l +","+ n +"</center></body></html>");
+                         
+                     }
+                     
+                 } catch (SQLException ex) {
+                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+             
+            JOptionPane.showMessageDialog(null,"Loged In");
+            op.setVisible(true);
+            this.dispose();
             }else{
                 JOptionPane.showMessageDialog(null,"Invalid");
             }

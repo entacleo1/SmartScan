@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2024 at 08:54 AM
+-- Generation Time: Apr 15, 2024 at 08:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,9 +28,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `tbl_gradelvl` (
+  `num` int(20) NOT NULL,
   `lvl` varchar(20) NOT NULL,
   `section` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_gradelvl`
+--
+
+INSERT INTO `tbl_gradelvl` (`num`, `lvl`, `section`) VALUES
+(1, 'BSIT 1', 'A'),
+(2, 'HUMMS 11', 'A'),
+(3, 'BSIT 2', 'A');
 
 -- --------------------------------------------------------
 
@@ -52,7 +62,7 @@ CREATE TABLE `tbl_stake` (
 --
 
 INSERT INTO `tbl_stake` (`id`, `tag`, `name`, `last`, `user`, `pass`) VALUES
-(1001, '0006505206', 'Leo', 'Entac', 'qwer', '1234');
+(1001, '0006505206', 'Jhon Leo Welliam', 'Entac', 'qwer', '1234');
 
 -- --------------------------------------------------------
 
@@ -80,14 +90,19 @@ CREATE TABLE `tbl_students` (
 --
 
 INSERT INTO `tbl_students` (`s_id`, `s_tag`, `s_last`, `s_mi`, `s_name`, `s_section`, `s_grade`, `s_bday`, `s_gender`, `s_mobile`, `s_guard`, `s_add`) VALUES
-(12, '1000', 'Alidon', 'A', 'Juli Ann', '1', 'HUMSS 11', '2007-09-04', 'Female', '09610549908', 'Mario', 'Tulay,Minglanilla,Cebu'),
-(200, '456789', 'Bustamante', 'M', 'Mike', 'B', 'BSIT', '2000-05-05', 'Male', '1234567890', 'Bus', 'Lipata'),
-(1001, '12346', 'Entac', 'C', 'Jhon Leo Welliam', 'A', 'BSIT 2', '2024-04-02', 'Male', '09266911314', 'Leo', 'Lower Calajo an Minglanilla cebu'),
-(312312, '213213', 'wqeqds', 'add', 'adasas', 'A', 'BSEDUC', '2000-02-02', 'Malew', 'eqweqw', 'ewqeqw', 'eqweq');
+(12, '1000', 'Alidon', 'A', 'Juli Ann', 'A', 'HUMMS 11', '2007-09-04', 'Female', '09610549908', 'Mario', 'Tulay,Minglanilla,Cebu'),
+(200, '456789', 'Bustamante', 'M', 'Mike', 'A', 'BSIT 1', '2000-05-05', 'Male', '1234567890', 'Bus', 'Lipata'),
+(1001, '12346', 'Entac', 'C', 'Jhon Leo Welliam', 'A', 'BSIT 2', '2024-04-02', 'Male', '09266911314', 'Leo', 'Lower Calajo an Minglanilla cebu');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `tbl_gradelvl`
+--
+ALTER TABLE `tbl_gradelvl`
+  ADD PRIMARY KEY (`num`);
 
 --
 -- Indexes for table `tbl_stake`
@@ -104,6 +119,12 @@ ALTER TABLE `tbl_students`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `tbl_gradelvl`
+--
+ALTER TABLE `tbl_gradelvl`
+  MODIFY `num` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_stake`

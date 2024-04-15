@@ -1,18 +1,15 @@
 package admin;
 
 import Students.addstud;
-import config.dbconnector;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javaapplication20.*;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+
 
 public class Dash extends javax.swing.JFrame {
 
@@ -23,25 +20,17 @@ public class Dash extends javax.swing.JFrame {
         
         initComponents();
         date();
-        time();
-        name();
+        time(); 
+        
+      
     }
 
- 
-      private void name(){
-        dbconnector db = new dbconnector();
-        try{
-        Statement stmt = db.connect.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM tbl_stake");
-        
-        while(rs.next()){
-           String name = rs.getString("name");
-            
-           lblname.setText(name);
-        }
-      }catch(SQLException ex){
-            System.out.println("Error");
-      }
+   
+   
+
+
+ public void name(String admin){
+        lblname.setText(admin);
     }
     
    
@@ -99,6 +88,7 @@ public class Dash extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         lbllogout4 = new javax.swing.JLabel();
         lblname = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -116,12 +106,14 @@ public class Dash extends javax.swing.JFrame {
         jPanel2.add(lbllogout1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 410, 80, -1));
 
         txtdate.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
+        txtdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txtdate.setText("    jLabel1");
-        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 110, 160, -1));
+        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 210, -1));
 
         txttime.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
+        txttime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txttime.setText("    jLabel1");
-        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 160, -1));
+        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 200, -1));
 
         navdash.setBackground(new java.awt.Color(255, 0, 0));
         navdash.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -189,9 +181,15 @@ public class Dash extends javax.swing.JFrame {
 
         jPanel2.add(navstud, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 210, 30));
 
-        lblname.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
-        lblname.setText("    jLabel1");
-        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 160, -1));
+        lblname.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
+        lblname.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblname.setText("0");
+        lblname.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        lblname.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 210, 40));
+
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/user.png"))); // NOI18N
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, -1, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -294,6 +292,7 @@ public class Dash extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbllogout1;
     private javax.swing.JLabel lbllogout2;

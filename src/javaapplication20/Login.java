@@ -6,6 +6,8 @@ import config.dbconnector;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 
@@ -27,22 +29,21 @@ public class Login extends javax.swing.JFrame {
         setFocusable(true);
        
     } 
-     
   
-    
     
     public static boolean loginAcc(String user, String pass){
         dbconnector connector = new dbconnector();
         try{
             String sql = "SELECT * FROM tbl_stake  WHERE user = '" + user + "' AND pass = '" + pass + "'";
-            ResultSet resultSet = connector.getData(sql);
-            return resultSet.next();
+            ResultSet res = connector.getData(sql);
+            return res.next();
         }catch (SQLException ex) {
             return false;
         }
 
     }
     
+   
     
     Color txt = new Color(153,153,153);
   
@@ -205,10 +206,25 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdloginMouseClicked
 
     private void txtpassKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtpassKeyPressed
+       dbconnector db = new dbconnector();
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){
              if(loginAcc(txtuser.getText(),txtpass.getText())){
-            Dash op = new Dash();
-            
+             Dash op = new Dash();
+             
+            try {
+                     String sq = "SELECT * FROM tbl_stake WHERE user = '" +txtuser.getText()+ "'";
+                     ResultSet res = db.getData(sq);
+                     if(res.next()){
+                         String n = res.getString("name");
+                         String l = res.getString("last");
+                         op.lblname.setText("<html><body><center>"+l +","+ n +"</center></body></html>");
+                         
+                     }
+                     
+                 } catch (SQLException ex) {
+                     Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+             
             JOptionPane.showMessageDialog(null,"Loged In");
             op.setVisible(true);
             this.dispose();
@@ -229,7 +245,8 @@ public class Login extends javax.swing.JFrame {
     private void txtuserKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtuserKeyPressed
         if(evt.getKeyCode() == KeyEvent.VK_ENTER){
          if(loginAcc(txtuser.getText(),txtpass.getText())){
-            Dash op = new Dash();
+             Dash op = new Dash();
+             
             
             JOptionPane.showMessageDialog(null,"Loged In");
             op.setVisible(true);
@@ -241,18 +258,12 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_txtuserKeyPressed
 
     private void lbltagMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbltagMouseClicked
-
-        tag op = new tag();
-        op.setVisible(true);
+        new tag().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_lbltagMouseClicked
 
     private void lbladdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbladdMouseClicked
-        signup op = new signup();
-        
-        op.setVisible(true);
-        
-        
+      new signup().setVisible(true);
     }//GEN-LAST:event_lbladdMouseClicked
 
     /**

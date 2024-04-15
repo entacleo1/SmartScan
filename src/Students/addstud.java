@@ -1,6 +1,7 @@
 
 package Students;
 
+
 import config.dbconnector;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,12 +11,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import net.proteanit.sql.DbUtils;
+
+
+
 
 
 /**
@@ -31,6 +32,7 @@ public class addstud extends javax.swing.JFrame {
     
     public addstud(){
         initComponents();
+       
         tb();
         filter();
         
@@ -41,16 +43,15 @@ public class addstud extends javax.swing.JFrame {
        
         
         try{
-        Statement st = db.connect.createStatement();
-        ResultSet rs = st.executeQuery("SELECT * FROM tbl_gradelvl");
        
+        ResultSet rs = db.getData("SELECT DISTINCT lvl FROM tbl_gradelvl");
        
+        gradelvl.addItem("All Grade Level");
+        section.addItem("All Sections");
        
        while(rs.next()){
            
            String grade = rs.getString("lvl");
-           String sec = rs.getString("section");
-           section.addItem(sec);
            gradelvl.addItem(grade);
            
        }
@@ -77,13 +78,15 @@ public class addstud extends javax.swing.JFrame {
             String last = res.getString("s_last");
             String mid = res.getString("s_mi");
             String first = res.getString("s_name");
+            String grd = res.getString("s_grade");
+            String sec = res.getString("s_section");
             String dob = res.getString("s_bday");
             String sex = res.getString("s_gender"); 
             String mobile = res.getString("s_mobile");
             String guard = res.getString("s_guard");
             String home = res.getString("s_add");
 
-            String table[] = {id,tag,last,mid,first,dob,sex,mobile,guard,home};
+            String table[] = {id,tag,last,mid,first,dob,sex,grd,sec,mobile,guard,home};
 
             DefaultTableModel tblmod = (DefaultTableModel)studlist.getModel();
             tblmod.addRow(table);
@@ -117,6 +120,7 @@ public class addstud extends javax.swing.JFrame {
         del = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         refresh = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         studlist = new javax.swing.JTable();
 
@@ -135,13 +139,23 @@ public class addstud extends javax.swing.JFrame {
         jPanel1.add(lblback, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 0, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel1.setText("Filter");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+        jLabel1.setText("Any Key or TAG#");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 40, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
         jLabel2.setText("Student MasterList");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
+        section.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sectionMouseClicked(evt);
+            }
+        });
+        section.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sectionActionPerformed(evt);
+            }
+        });
         jPanel1.add(section, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 60, 120, -1));
 
         gradelvl.addActionListener(new java.awt.event.ActionListener() {
@@ -149,7 +163,7 @@ public class addstud extends javax.swing.JFrame {
                 gradelvlActionPerformed(evt);
             }
         });
-        jPanel1.add(gradelvl, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 100, -1));
+        jPanel1.add(gradelvl, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 110, -1));
 
         txtsearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -198,16 +212,20 @@ public class addstud extends javax.swing.JFrame {
         });
         jPanel1.add(refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 50, -1, -1));
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel4.setText("Filter");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+
         studlist.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Tag#", "Last Name", "M.I", "First Name", "DOB", "Gender", "Mobile", "Guardian", "Address"
+                "ID", "Tag#", "Last Name", "M.I", "First Name", "DOB", "Gender", "Grade", "Section", "Mobile", "Guardian", "Address"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -262,7 +280,25 @@ public class addstud extends javax.swing.JFrame {
     }//GEN-LAST:event_addMouseClicked
 
     private void gradelvlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradelvlActionPerformed
-        // TODO add your handling code here:
+
+        section.removeAllItems();
+        section.addItem("All Sections");
+          try{
+              ResultSet rs = db.getData("SELECT section FROM tbl_gradelvl WHERE lvl = '"+gradelvl.getSelectedItem()+"'");
+              
+            while(rs.next()){
+                  
+                  String grade = rs.getString("section");
+                  section.addItem(grade);
+           
+       }
+      }catch(SQLException ex){
+           System.out.println("Error");
+          
+      }
+              
+           
+       
     }//GEN-LAST:event_gradelvlActionPerformed
 
     private void txtsearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtsearchActionPerformed
@@ -280,8 +316,11 @@ public class addstud extends javax.swing.JFrame {
           int a = JOptionPane.showConfirmDialog(null,"Are you Sure You want to Delete ID " + id , "Select", JOptionPane.YES_NO_OPTION);
           if( a == 0){
               int s_id = Integer.parseInt(id);
-              db.delete(s_id, "tbl_students");
+              db.delete(s_id, "tbl_students", "s_id");
           }
+          DefaultTableModel def = (DefaultTableModel)studlist.getModel();
+          def.setRowCount(0);
+          tb();
       }
        
     }//GEN-LAST:event_delMouseClicked
@@ -311,15 +350,16 @@ public class addstud extends javax.swing.JFrame {
             stud.txtbday.setDate(bdayDate);
             
             } catch (ParseException e) {
-                 e.printStackTrace();
-                 
              }
-   
             
             stud.gender = model.getValueAt(row, 6).toString();
-            stud.txtmobile.setText(""+model.getValueAt(row, 7));
-            stud.txtguard.setText(""+model.getValueAt(row, 8));
-            stud.txtadd.setText(""+model.getValueAt(row, 9));
+             
+            stud.txtsec.setSelectedItem(model.getValueAt(row, 8));
+            stud.txtgrade.setSelectedItem(model.getValueAt(row, 7));
+            
+            stud.txtmobile.setText(""+model.getValueAt(row, 9));
+            stud.txtguard.setText(""+model.getValueAt(row, 10));
+            stud.txtadd.setText(""+model.getValueAt(row, 11));
             stud.action = "Update";
             stud.save.setText("Update");
             stud.setVisible(true);
@@ -337,13 +377,51 @@ public class addstud extends javax.swing.JFrame {
     }//GEN-LAST:event_refreshMouseClicked
 
     private void txtsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsearchKeyReleased
-       
-        DefaultTableModel src = (DefaultTableModel)studlist.getModel();
-        TableRowSorter<DefaultTableModel> sr = new TableRowSorter<>(src);
-        studlist.setRowSorter(sr);
-        sr.setRowFilter(RowFilter.regexFilter(txtsearch.getText()));
+         String query = txtsearch.getText();
+         String searchQuery = "SELECT * FROM tbl_students WHERE s_name LIKE '%" + query + "%' OR s_last LIKE '%" + query + "%' "
+                               + "OR s_tag LIKE '%"+query+"%' ";
+          
+    try {
+        ResultSet res = db.getData(searchQuery);
+        
+        DefaultTableModel model = (DefaultTableModel) studlist.getModel();
+        model.setRowCount(0); 
+      
+         while (res.next()) {
+
+            String id = String.valueOf(res.getString("s_id"));
+            String tag = res.getString("s_tag");
+            String last = res.getString("s_last");
+            String mid = res.getString("s_mi");
+            String first = res.getString("s_name");
+            String grd = res.getString("s_grade");
+            String sec = res.getString("s_section");
+            String dob = res.getString("s_bday");
+            String sex = res.getString("s_gender"); 
+            String mobile = res.getString("s_mobile");
+            String guard = res.getString("s_guard");
+            String home = res.getString("s_add");
+
+            String table[] = {id,tag,last,mid,first,dob,sex,grd,sec,mobile,guard,home};
+
+            DefaultTableModel tblmod = (DefaultTableModel)studlist.getModel();
+            tblmod.addRow(table);
+
+        }
+        
+    } catch(SQLException ex) {
+        System.out.println("Error searching users: " + ex.getMessage());
+    }
         
     }//GEN-LAST:event_txtsearchKeyReleased
+
+    private void sectionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sectionMouseClicked
+   
+    }//GEN-LAST:event_sectionMouseClicked
+
+    private void sectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sectionActionPerformed
+      
+    }//GEN-LAST:event_sectionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -387,6 +465,7 @@ public class addstud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

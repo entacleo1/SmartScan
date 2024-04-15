@@ -190,6 +190,11 @@ public class newstud extends javax.swing.JFrame {
         jPanel2.add(txtbday, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 280, 260, 30));
 
         txtgrade.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        txtgrade.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtgradeActionPerformed(evt);
+            }
+        });
         jPanel2.add(txtgrade, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 270, 200, 30));
 
         jPanel2.add(txtsec, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 310, 200, 30));
@@ -217,14 +222,13 @@ public class newstud extends javax.swing.JFrame {
     private void gradesel(){
         try{
            Statement st = con.connect.createStatement();
-           ResultSet rs = st.executeQuery("SELECT * FROM tbl_gradelvl");
+           ResultSet rs = st.executeQuery("SELECT DISTINCT lvl FROM tbl_gradelvl");
            
            while(rs.next()){
            String grade = rs.getString("lvl");
-           String sec = rs.getString("section");
-           
+        
            txtgrade.addItem(grade);
-           txtsec.addItem(sec);
+          
            }
         }catch(SQLException ex){
             
@@ -232,6 +236,9 @@ public class newstud extends javax.swing.JFrame {
         }
             
     }
+    
+     public static String tag;
+   
     
     private void lblbackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblbackMouseClicked
       addstud op = new addstud();
@@ -318,6 +325,28 @@ public class newstud extends javax.swing.JFrame {
       }
      
     }//GEN-LAST:event_maleActionPerformed
+
+    private void txtgradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtgradeActionPerformed
+        txtsec.removeAllItems();
+         
+          try{
+        Statement st = con.connect.createStatement();
+        ResultSet rs = st.executeQuery("SELECT section FROM tbl_gradelvl WHERE lvl = '"+txtgrade.getSelectedItem()+"'");
+       
+       
+       
+       while(rs.next()){
+           
+           String grade = rs.getString("section");
+          txtsec.addItem(grade);
+           
+       }
+      }catch(SQLException ex){
+           System.out.println("Error");
+          
+      }
+
+    }//GEN-LAST:event_txtgradeActionPerformed
 
     /**
      * @param args the command line arguments

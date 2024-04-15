@@ -109,6 +109,12 @@ public class signup extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("DialogInput", 1, 12)); // NOI18N
         jLabel5.setText("Username");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, -1, -1));
+
+        txtuser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtuserActionPerformed(evt);
+            }
+        });
         jPanel1.add(txtuser, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 120, 220, 30));
 
         jLabel6.setFont(new java.awt.Font("DialogInput", 1, 12)); // NOI18N
@@ -137,10 +143,10 @@ public class signup extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        setSize(new java.awt.Dimension(555, 491));
+        setSize(new java.awt.Dimension(555, 433));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -155,6 +161,8 @@ public class signup extends javax.swing.JFrame {
     private void cmdsaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmdsaveMouseClicked
        if (!(txtpass.getText().equals(txtpasscon.getText()))) {
         JOptionPane.showMessageDialog(null, "Password don't Match");
+    }else if(txtpass.getText().length() < 8){
+        JOptionPane.showMessageDialog(null, "Password must be 8 or more Characters");
     }else if(idValid(txtid.getText())){
         JOptionPane.showMessageDialog(null, "ID Already Exist");
     }else if(userValid(txtuser.getText())){
@@ -163,14 +171,10 @@ public class signup extends javax.swing.JFrame {
         try{
             dbconnector con = new dbconnector();
         
-            String id = txtid.getText();
-            String tag = txttag.getText();
-            String name = txtname.getText();
-            String last = txtlast.getText();
-            String user = txtuser.getText();
-            String pass = txtpass.getText();
-                    
-             String sql = "INSERT INTO tbl_stake(id, tag, name, last, user, pass) VALUES ('"+id+"','"+tag+"','"+name+"','"+last+"','"+user+"','"+pass+"')" ;
+                 
+             String sql = "INSERT INTO tbl_stake(id, tag, name, last, user, pass) "
+                     + "VALUES ('"+txtid.getText()+"','"+txttag.getText()+"','"+txtname.getText()+"','"+txtlast.getText()+"',"
+                     + "'"+txtuser.getText()+"','"+txtpass.getText()+"')" ;
              
             Statement stmt = con.connect.createStatement();
             int rowsAffected = stmt.executeUpdate(sql);
@@ -185,6 +189,7 @@ public class signup extends javax.swing.JFrame {
                 txtuser.setText("");
                 txtpass.setText("");
                 txtpasscon.setText("");
+                this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Null");
             }
@@ -194,6 +199,10 @@ public class signup extends javax.swing.JFrame {
                     }
        }
     }//GEN-LAST:event_cmdsaveMouseClicked
+
+    private void txtuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtuserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtuserActionPerformed
 
     /**
      * @param args the command line arguments
