@@ -2,7 +2,9 @@
 package Students;
 
 
+import admin.Dash;
 import config.dbconnector;
+import config.session;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,13 +31,32 @@ public class addstud extends javax.swing.JFrame {
      * Creates new form addstud
      */
     dbconnector db = new dbconnector();
+    session ses = session.getInstance();
     
     public addstud(){
         initComponents();
        
         tb();
         filter();
+        statshow();
         
+    }
+    private void statshow(){
+        try{
+            ResultSet res = db.getData("SELECT * FROM tbl_stake WHERE position = '"+ses.getPos()+"'");
+            
+            if(res.next()){
+                String posi = res.getString("position");
+                
+                if(posi.equals("Super Admin")){
+                    System.out.println("Revealed");
+                }else{
+                    man.hide();
+                }
+            }
+        }catch(SQLException e){
+            System.out.println(""+e);
+        }
     }
     
     
@@ -47,12 +68,15 @@ public class addstud extends javax.swing.JFrame {
         ResultSet rs = db.getData("SELECT DISTINCT lvl FROM tbl_gradelvl");
        
         gradelvl.addItem("All Grade Level");
-        section.addItem("All Sections");
+        //section.addItem("All Sections");
+          
        
        while(rs.next()){
            
            String grade = rs.getString("lvl");
            gradelvl.addItem(grade);
+           
+           
            
        }
       }catch(SQLException ex){
@@ -68,7 +92,7 @@ public class addstud extends javax.swing.JFrame {
 
     try {
         Statement st = db.connect.createStatement();
-        String sql = "SELECT * FROM tbl_students ORDER BY s_last";
+        String sql = "SELECT * FROM tbl_students WHERE (s_stat = 'Pending' OR s_stat = 'Active') ORDER BY s_last";
         ResultSet res = db.getData(sql);
 
         while (res.next()) {
@@ -85,8 +109,9 @@ public class addstud extends javax.swing.JFrame {
             String mobile = res.getString("s_mobile");
             String guard = res.getString("s_guard");
             String home = res.getString("s_add");
+            String stats = res.getString("s_stat");
 
-            String table[] = {id,tag,last,mid,first,dob,sex,grd,sec,mobile,guard,home};
+            String table[] = {id,tag,last,mid,first,dob,sex,grd,sec,mobile,guard,home,stats};
 
             DefaultTableModel tblmod = (DefaultTableModel)studlist.getModel();
             tblmod.addRow(table);
@@ -121,6 +146,9 @@ public class addstud extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         refresh = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        man = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         studlist = new javax.swing.JTable();
 
@@ -139,18 +167,18 @@ public class addstud extends javax.swing.JFrame {
         jPanel1.add(lblback, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 0, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel1.setText("Any Key or TAG#");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 40, -1, -1));
+        jLabel1.setText("Arcihive");
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 70, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
         jLabel2.setText("Student MasterList");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        section.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                sectionMouseClicked(evt);
-            }
-        });
         section.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 sectionActionPerformed(evt);
@@ -194,7 +222,7 @@ public class addstud extends javax.swing.JFrame {
                 delMouseClicked(evt);
             }
         });
-        jPanel1.add(del, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 50, 30, 30));
+        jPanel1.add(del, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 50, 30, 30));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/update.png"))); // NOI18N
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -202,7 +230,7 @@ public class addstud extends javax.swing.JFrame {
                 jLabel5MouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 50, 30, 30));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 50, 30, 30));
 
         refresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/re.png"))); // NOI18N
         refresh.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -210,22 +238,38 @@ public class addstud extends javax.swing.JFrame {
                 refreshMouseClicked(evt);
             }
         });
-        jPanel1.add(refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 50, -1, -1));
+        jPanel1.add(refresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 50, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel4.setText("Filter");
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
+
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/kilid.jpg"))); // NOI18N
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, -1, -1));
+
+        man.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        man.setText("Manage");
+        man.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                manMouseClicked(evt);
+            }
+        });
+        jPanel1.add(man, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 50, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel8.setText("Any Key or TAG#");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 40, -1, -1));
 
         studlist.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Tag#", "Last Name", "M.I", "First Name", "DOB", "Gender", "Grade", "Section", "Mobile", "Guardian", "Address"
+                "ID", "Tag#", "Last Name", "M.I", "First Name", "DOB", "Gender", "Grade", "Section", "Mobile", "Guardian", "Address", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -248,7 +292,7 @@ public class addstud extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 864, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
@@ -265,6 +309,8 @@ public class addstud extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lblbackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblbackMouseClicked
+        Dash op = new Dash();
+        op.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_lblbackMouseClicked
 
@@ -282,9 +328,62 @@ public class addstud extends javax.swing.JFrame {
     private void gradelvlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradelvlActionPerformed
 
         section.removeAllItems();
-        section.addItem("All Sections");
+       
+        
+        if(gradelvl.getSelectedItem().equals("All Grade Level")){
+            DefaultTableModel model = (DefaultTableModel)studlist.getModel();
+            model.setRowCount(0);
+            section.addItem("All Sections");
+            tb();
+        }else{
+         
+         String grd = gradelvl.getSelectedItem().toString();
+            
+            String ser = "SELECT * FROM tbl_students WHERE s_grade LIKE '%" + grd + "%'";
+            section.addItem("All Sections");
+                 try {
+        ResultSet res = db.getData(ser);
+        
+        DefaultTableModel model = (DefaultTableModel) studlist.getModel();
+        model.setRowCount(0); 
+      
+                while (res.next()) {
+
+                   String id = String.valueOf(res.getString("s_id"));
+                   String tag = res.getString("s_tag");
+                   String last = res.getString("s_last");
+                   String mid = res.getString("s_mi");
+                   String first = res.getString("s_name");
+                   String grade = res.getString("s_grade");
+                   String sec = res.getString("s_section");
+                   String dob = res.getString("s_bday");
+                   String sex = res.getString("s_gender"); 
+                   String mobile = res.getString("s_mobile");
+                   String guard = res.getString("s_guard");
+                   String home = res.getString("s_add");
+
+                   String table[] = {id,tag,last,mid,first,dob,sex,grade,sec,mobile,guard,home};
+
+                   DefaultTableModel tblmod = (DefaultTableModel)studlist.getModel();
+                   tblmod.addRow(table);
+
+               }
+
+           } catch(SQLException ex) {
+               System.out.println("Error searching users: " + ex.getMessage());
+           }
+                 
+        }           
+        
           try{
-              ResultSet rs = db.getData("SELECT section FROM tbl_gradelvl WHERE lvl = '"+gradelvl.getSelectedItem()+"'");
+              ResultSet rs;
+              if (gradelvl.getSelectedItem() == "All Grade Level") {
+                  rs = db.getData("SELECT DISTINCT section FROM tbl_gradelvl");
+              }
+              else {
+                  rs = db.getData("SELECT section FROM tbl_gradelvl WHERE lvl = '"+gradelvl.getSelectedItem()+"'");
+              }
+              
               
             while(rs.next()){
                   
@@ -315,8 +414,7 @@ public class addstud extends javax.swing.JFrame {
           String id = val.toString();
           int a = JOptionPane.showConfirmDialog(null,"Are you Sure You want to Delete ID " + id , "Select", JOptionPane.YES_NO_OPTION);
           if( a == 0){
-              int s_id = Integer.parseInt(id);
-              db.delete(s_id, "tbl_students", "s_id");
+            db.update("UPDATE tbl_students SET s_stat = 'Archive' WHERE s_id ='"+id+"'",false);
           }
           DefaultTableModel def = (DefaultTableModel)studlist.getModel();
           def.setRowCount(0);
@@ -360,6 +458,24 @@ public class addstud extends javax.swing.JFrame {
             stud.txtmobile.setText(""+model.getValueAt(row, 9));
             stud.txtguard.setText(""+model.getValueAt(row, 10));
             stud.txtadd.setText(""+model.getValueAt(row, 11));
+           
+            try{
+               ResultSet res = db.getData("SELECT s_pic FROM tbl_students WHERE s_id = '"+stud.txtid.getText()+"' ");
+               if(res.next()){
+               
+                   stud.lblpic.setIcon(stud.ResizeImage(res.getString("s_pic"), null, stud.lblpic));
+                   stud.oldpath = res.getString("s_pic");
+                   stud.path = res.getString("s_pic");
+                   stud.destination = res.getString("s_pic");
+                   
+           
+                           
+               }
+            }catch(SQLException e){
+                System.out.println(""+e.getLocalizedMessage());
+                
+            }
+           
             stud.action = "Update";
             stud.save.setText("Update");
             stud.setVisible(true);
@@ -371,15 +487,18 @@ public class addstud extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void refreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshMouseClicked
-       DefaultTableModel model = (DefaultTableModel)studlist.getModel();
-       model.setRowCount(0);
-       tb();
+    
+        DefaultTableModel model = (DefaultTableModel)studlist.getModel();
+        model.setRowCount(0);
+        tb();      
+        
+      
     }//GEN-LAST:event_refreshMouseClicked
 
     private void txtsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsearchKeyReleased
          String query = txtsearch.getText();
-         String searchQuery = "SELECT * FROM tbl_students WHERE s_name LIKE '%" + query + "%' OR s_last LIKE '%" + query + "%' "
-                               + "OR s_tag LIKE '%"+query+"%' ";
+         String searchQuery = "SELECT * FROM tbl_students WHERE (s_name LIKE '%" + query + "%' OR s_last LIKE '%" + query + "%' "
+                               + "OR s_tag LIKE '%"+query+"%') AND s_grade = '"+gradelvl.getSelectedItem()+"' ";
           
     try {
         ResultSet res = db.getData(searchQuery);
@@ -415,13 +534,60 @@ public class addstud extends javax.swing.JFrame {
         
     }//GEN-LAST:event_txtsearchKeyReleased
 
-    private void sectionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sectionMouseClicked
-   
-    }//GEN-LAST:event_sectionMouseClicked
-
     private void sectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sectionActionPerformed
-      
+      String grd = gradelvl.getSelectedItem() != null ? gradelvl.getSelectedItem().toString() : "";
+        String ser;
+
+        if (section.getSelectedItem() != null && section.getSelectedItem().equals("All Sections")) {
+            ser = "SELECT * FROM tbl_students WHERE s_grade LIKE '%" + grd + "%'";
+        } else {
+            String sec = section.getSelectedItem() != null ? section.getSelectedItem().toString() : "";
+            ser = "SELECT * FROM tbl_students WHERE s_section LIKE '%" + sec + "%' AND s_grade LIKE '%" + grd + "%'";
+        }
+   
+        try {
+        ResultSet res = db.getData(ser);
+
+        DefaultTableModel model = (DefaultTableModel) studlist.getModel();
+        model.setRowCount(0);
+
+        while (res.next()) {
+            String id = res.getString("s_id");
+            String tag = res.getString("s_tag");
+            String last = res.getString("s_last");
+            String mid = res.getString("s_mi");
+            String first = res.getString("s_name");
+            String grade = res.getString("s_grade");
+            String sec = res.getString("s_section");
+            String dob = res.getString("s_bday");
+            String sex = res.getString("s_gender");
+            String mobile = res.getString("s_mobile");
+            String guard = res.getString("s_guard");
+            String home = res.getString("s_add");
+
+            String[] table = {id, tag, last, mid, first, dob, sex, grade, sec, mobile, guard, home};
+
+            DefaultTableModel tblmod = (DefaultTableModel) studlist.getModel();
+            tblmod.addRow(table);
+        }
+
+        } catch (SQLException ex) {
+        System.out.println("Error searching users: " + ex.getMessage());
+        }
     }//GEN-LAST:event_sectionActionPerformed
+
+    private void manMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_manMouseClicked
+       manage op = new manage();
+       
+       op.setVisible(true);
+       this.dispose();
+    }//GEN-LAST:event_manMouseClicked
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        studarchive op = new studarchive();
+        op.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jLabel1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -467,9 +633,12 @@ public class addstud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblback;
+    private javax.swing.JLabel man;
     private javax.swing.JLabel refresh;
     private javax.swing.JComboBox<String> section;
     private javax.swing.JTable studlist;

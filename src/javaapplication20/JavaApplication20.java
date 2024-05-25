@@ -5,6 +5,9 @@
  */
 package javaapplication20;
 
+import config.hasher;
+import java.util.Scanner;
+
 
 /**
  *
@@ -17,6 +20,8 @@ public class JavaApplication20 {
      */
     public static void main(String[] args) {
        new Login().setVisible(true);
+       
+     
     }
     
 }

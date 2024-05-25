@@ -19,9 +19,6 @@ public class dbconnector {
     
     public dbconnector(){
         
-        
-        
-        
             try{
                 connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/RFID", "root", "");
             }catch(SQLException ex){
@@ -50,13 +47,18 @@ public class dbconnector {
             }
         }
         
-        //update
-        public void update(String sql){
+        public void update(String sql, boolean showMessageDialog){
             try{
                 PreparedStatement pst = connect.prepareStatement(sql);
                 int row = pst.executeUpdate();
                 if(row > 0 ){
-                    JOptionPane.showMessageDialog(null, "Updated");
+                    if (showMessageDialog) {
+                        System.out.println("Updated");
+                        JOptionPane.showMessageDialog(null,"Updated");
+                    }
+                    else {
+                        System.out.println("Updated");
+                    }
                 }else{
                     System.out.println("Failed");
                 }
@@ -64,6 +66,11 @@ public class dbconnector {
                 JOptionPane.showMessageDialog(null,"Error" + ex.getMessage());
             }
             
+        }
+        
+        //update
+        public void update(String sql){
+            this.update(sql, true);
         }
         
         //delete
