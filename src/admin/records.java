@@ -5,7 +5,9 @@
  */
 package admin;
 
+import config.TablePrinter;
 import config.dbconnector;
+import config.session;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -35,13 +39,38 @@ public class records extends javax.swing.JFrame {
      * Creates new form records
      */
     public records() {
+         
         initComponents();
         tb();
+        dt();
+        section.hide();
+        type.hide();
+        
     }
+    session ses = session.getInstance();
     dbconnector db = new dbconnector();
     public String action;
     
+  public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        db.insertData(insertQuery);
+    }
   
+    private void dt(){
+         try {
+            ResultSet res = db.getData("SELECT DISTINCT date FROM records");
+            
+            while(res.next()){
+                dets.addItem(res.getString("date"));
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(records.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }
+ 
     
     
       private void tb() {
@@ -49,7 +78,7 @@ public class records extends javax.swing.JFrame {
 
     try {
         
-        ResultSet res = db.getData("SELECT * FROM records ORDER BY last");
+        ResultSet res = db.getData("SELECT * FROM records ORDER BY date DESC");
 
         while (res.next()) {
 
@@ -58,6 +87,7 @@ public class records extends javax.swing.JFrame {
             String last = res.getString("last");
             String mid = res.getString("mid");
             String first = res.getString("name");
+            String posi = res.getString("pos_type");
             String pos = res.getString("pos");
             String tmin = res.getString("time_in");
             String tmout = res.getString("time_out");
@@ -65,7 +95,7 @@ public class records extends javax.swing.JFrame {
       
             
 
-            String table[] = {id,tag,last,mid,first,pos,tmin,tmout,date};
+            String table[] = {id,tag,last,mid,first,pos,posi,tmin,tmout,date};
 
             DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
             tblmod.addRow(table);
@@ -99,12 +129,16 @@ public class records extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        dets = new javax.swing.JComboBox<>();
         filter = new javax.swing.JComboBox<>();
         txtsearch = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        type = new javax.swing.JComboBox<>();
+        section = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         rec_list = new javax.swing.JTable();
@@ -128,7 +162,14 @@ public class records extends javax.swing.JFrame {
         });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 10, -1, -1));
 
-        filter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Types", "Students", "Teachers/Staff" }));
+        dets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detsActionPerformed(evt);
+            }
+        });
+        jPanel1.add(dets, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 100, 30));
+
+        filter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Records", "Students", "Teachers/Staff" }));
         filter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filterActionPerformed(evt);
@@ -146,10 +187,10 @@ public class records extends javax.swing.JFrame {
                 txtsearchKeyReleased(evt);
             }
         });
-        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 50, 200, 30));
+        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 50, 200, 30));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/search.png"))); // NOI18N
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 30, 20));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 60, 30, 20));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/kilid.jpg"))); // NOI18N
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, -10, -1, 110));
@@ -164,8 +205,31 @@ public class records extends javax.swing.JFrame {
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 60, -1, 20));
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel5.setText("Any Key or TAG#");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, -1, 20));
+        jLabel5.setText("Print Table");
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 40, -1, 20));
+
+        type.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeActionPerformed(evt);
+            }
+        });
+        jPanel1.add(type, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 50, 100, 30));
+
+        section.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sectionActionPerformed(evt);
+            }
+        });
+        jPanel1.add(section, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 20, 100, 30));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel6.setText("Any Key or TAG#");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 30, -1, 20));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -174,11 +238,11 @@ public class records extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Tag#", "Last Name", "M.I", "Name", "Grade/Position", "Time In", "Time Out", "Date"
+                "ID", "Tag#", "Last Name", "M.I", "Name", "Grade/Position", "Sec/Type", "Time In", "Time Out", "Date"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -228,13 +292,14 @@ public class records extends javax.swing.JFrame {
             DefaultTableModel mod = (DefaultTableModel)rec_list.getModel();
             mod.setRowCount(0);
 
-        while (res.next()) {
+     while (res.next()) {
 
             String id = String.valueOf(res.getString("reference_id"));
             String tag = res.getString("tags");
             String last = res.getString("last");
             String mid = res.getString("mid");
             String first = res.getString("name");
+            String posi = res.getString("pos_type");
             String pos = res.getString("pos");
             String tmin = res.getString("time_in");
             String tmout = res.getString("time_out");
@@ -242,11 +307,10 @@ public class records extends javax.swing.JFrame {
       
             
 
-            String table[] = {id,tag,last,mid,first,pos,tmin,tmout,date};
+            String table[] = {id,tag,last,mid,first,pos,posi,tmin,tmout,date};
 
             DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
             tblmod.addRow(table);
-
         }
 
     } catch (SQLException ex) {
@@ -257,75 +321,48 @@ public class records extends javax.swing.JFrame {
 
     private void filterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterActionPerformed
       if(filter.getSelectedItem().equals("All Records")){
-           DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
-            model.setRowCount(0);
-            tb();
+      
+        section.hide();
+        type.hide();
       }else if(filter.getSelectedItem().equals("Students")){
-          
-           try {
-        
-        ResultSet res = db.getData("SELECT * FROM records WHERE reference_type = 'student' ORDER BY last");
-      
-        DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
-        tblmod.setRowCount(0);
-        
-        
-        while (res.next()) {
-            
-            String id = String.valueOf(res.getString("reference_id"));
-            String tag = res.getString("tags");
-            String last = res.getString("last");
-            String mid = res.getString("mid");
-            String first = res.getString("name");
-            String pos = res.getString("pos");
-            String tmin = res.getString("time_in");
-            String tmout = res.getString("time_out");
-            String date = res.getString("date");
-            
-            String table[] = {id,tag,last,mid,first,pos,tmin,tmout,date};
-            tblmod.addRow(table);
-          
-            
+          type.removeAllItems();
 
-        }
-
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
-    }
-      
-      }else if(filter.getSelectedItem().equals("Teachers/Staff")){
-          
-          
           try {
-        
-        ResultSet res = db.getData("SELECT * FROM records WHERE reference_type = 'stake' ORDER BY last");
-        
-        
-        DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
-        tblmod.setRowCount(0);
+              ResultSet res = db.getData("SELECT DISTINCT lvl, section FROM tbl_gradelvl");
+              
+              while(res.next()){
+                  type.addItem(res.getString("lvl"));
+                  section.removeAllItems();
+                
+              }
+              
+              ResultSet sec = db.getData("SELECT section FROM tbl_gradelvl WHERE lvl = '"+type.getSelectedItem()+"'");
+               while(sec.next()){
+                  section.addItem(sec.getString("section"));
+               
+              }
+          } catch (SQLException ex) {
+              Logger.getLogger(records.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          section.setVisible(true);
+          type.setVisible(true);
+      }else if(filter.getSelectedItem().equals("Teachers/Staff")){
+          section.hide();
+          section.removeAllItems();
+          type.removeAllItems();
+            try {
+              ResultSet res = db.getData("SELECT pos_type FROM tbl_stake");
+              
+              while(res.next()){
+                  type.addItem(res.getString("pos_type"));
+                 
+              }
+          } catch (SQLException ex) {
+              Logger.getLogger(records.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          type.setVisible(true);
+      }
 
-        while (res.next()) {
-            
-            String id = String.valueOf(res.getString("reference_id"));
-            String tag = res.getString("tags");
-            String last = res.getString("last");
-            String mid = res.getString("mid");
-            String first = res.getString("name");
-            String pos = res.getString("pos");
-            String tmin = res.getString("time_in");
-            String tmout = res.getString("time_out");
-            String date = res.getString("date");
-            
-            String table[] = {id,tag,last,mid,first,pos,tmin,tmout,date};
-            tblmod.addRow(table);
-          
-          
-        }
-
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
-    }
-      } 
     }//GEN-LAST:event_filterActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
@@ -377,6 +414,8 @@ public class records extends javax.swing.JFrame {
                wb.close();
                out.close();
                openFile(saveFile.toString());
+               addLogs(""+ses.getName()+" Records Exported to Excel");
+               
            }else{
                JOptionPane.showMessageDialog(null,"Error al generar archivo");
            }
@@ -386,6 +425,102 @@ public class records extends javax.swing.JFrame {
            System.out.println(io);
        }
     }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void detsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detsActionPerformed
+          try {
+        String st;
+        if (filter.getSelectedItem().equals("Students")) {
+            st = "student";   
+ 
+                ResultSet res = db.getData("SELECT * FROM records WHERE date = '" + dets.getSelectedItem() + "' "
+                        + "AND reference_type = '" + st + "' "
+                        + "AND pos = '" + type.getSelectedItem() + "' "
+                        + "AND pos_type = '" + section.getSelectedItem() + "'");
+
+                DefaultTableModel tblmod = (DefaultTableModel) rec_list.getModel();
+                tblmod.setRowCount(0);
+
+                while (res.next()) {
+                    String id = String.valueOf(res.getString("reference_id"));
+                    String tag = res.getString("tags");
+                    String last = res.getString("last");
+                    String mid = res.getString("mid");
+                    String first = res.getString("name");
+                    String posi = res.getString("pos_type");
+                    String pos = res.getString("pos");
+                    String tmin = res.getString("time_in");
+                    String tmout = res.getString("time_out");
+                    String date = res.getString("date");
+
+                    String table[] = {id, tag, last, mid, first, pos, posi, tmin, tmout, date};
+                    tblmod.addRow(table);
+                }
+             
+            
+        } else if (filter.getSelectedItem().equals("Teachers/Staff")) {
+            st = "stake";
+            ResultSet res = db.getData("SELECT * FROM records WHERE date = '" + dets.getSelectedItem() + "' "
+                    + "AND reference_type = '" + st + "' AND pos_type = '"+type.getSelectedItem()+"'");
+
+            DefaultTableModel tblmod = (DefaultTableModel) rec_list.getModel();
+            tblmod.setRowCount(0);
+
+            while (res.next()) {
+                String id = String.valueOf(res.getString("reference_id"));
+                String tag = res.getString("tags");
+                String last = res.getString("last");
+                String mid = res.getString("mid");
+                String first = res.getString("name");
+                String posi = res.getString("pos_type");
+                String pos = res.getString("pos");
+                String tmin = res.getString("time_in");
+                String tmout = res.getString("time_out");
+                String date = res.getString("date");
+
+                String table[] = {id, tag, last, mid, first, pos, posi, tmin, tmout, date};
+                tblmod.addRow(table);
+            }
+        } else {
+            ResultSet res = db.getData("SELECT * FROM records WHERE date = '" + dets.getSelectedItem() + "'");
+
+            DefaultTableModel tblmod = (DefaultTableModel) rec_list.getModel();
+            tblmod.setRowCount(0);
+
+            while (res.next()) {
+                String id = String.valueOf(res.getString("reference_id"));
+                String tag = res.getString("tags");
+                String last = res.getString("last");
+                String mid = res.getString("mid");
+                String first = res.getString("name");
+                String posi = res.getString("pos_type");
+                String pos = res.getString("pos");
+                String tmin = res.getString("time_in");
+                String tmout = res.getString("time_out");
+                String date = res.getString("date");
+
+                String table[] = {id, tag, last, mid, first, pos, posi, tmin, tmout, date};
+                tblmod.addRow(table);
+            }
+        }
+
+    } catch (SQLException ex) {
+        Logger.getLogger(records.class.getName()).log(Level.SEVERE, null, ex);
+    }
+       
+    }//GEN-LAST:event_detsActionPerformed
+
+    private void typeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_typeActionPerformed
+
+    private void sectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sectionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sectionActionPerformed
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+       TablePrinter pr = new TablePrinter(rec_list,"ATTENDANCE SHEET");
+       pr.print();        
+    }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments
@@ -423,17 +558,21 @@ public class records extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> dets;
     private javax.swing.JComboBox<String> filter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable rec_list;
+    private javax.swing.JComboBox<String> section;
     private javax.swing.JTextField txtsearch;
+    private javax.swing.JComboBox<String> type;
     // End of variables declaration//GEN-END:variables
 }

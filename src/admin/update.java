@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import user.user_dash;
 
 /**
  *
@@ -326,8 +327,9 @@ public class update extends javax.swing.JFrame {
                 op.setVisible(true);
                 this.dispose();
                break;
-           case "stake":
-               stakes p = new stakes();
+           
+           case "user":
+               user_dash p = new user_dash();
                
                p.setVisible(true);
                this.dispose();

@@ -35,6 +35,7 @@ public class Dash extends javax.swing.JFrame {
     public Dash() {
         
         initComponents();
+        activity.setVisible(false);
         date();
         time(); 
 
@@ -131,6 +132,9 @@ public class Dash extends javax.swing.JFrame {
         lbllogout1 = new javax.swing.JLabel();
         txtdate = new javax.swing.JLabel();
         txttime = new javax.swing.JLabel();
+        actlog = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        lbllogout8 = new javax.swing.JLabel();
         navmanage = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         lbllogout3 = new javax.swing.JLabel();
@@ -138,14 +142,19 @@ public class Dash extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         lbllogout4 = new javax.swing.JLabel();
         lblname = new javax.swing.JLabel();
-        picture = new javax.swing.JLabel();
+        session ses = session.getInstance();
+        picture = new config.CircularImageLabel(ses.getPic());
         navstud1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         lbllogout5 = new javax.swing.JLabel();
         rec = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         lbllogout6 = new javax.swing.JLabel();
+        dash = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        lbllogout9 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        activity = new javax.swing.JDesktopPane();
         jLabel8 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -173,12 +182,35 @@ public class Dash extends javax.swing.JFrame {
         txtdate.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         txtdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txtdate.setText("    jLabel1");
-        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 310, -1));
+        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 310, -1));
 
         txttime.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         txttime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txttime.setText("    jLabel1");
-        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 310, -1));
+        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 310, -1));
+
+        actlog.setBackground(new java.awt.Color(255, 0, 0));
+        actlog.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                actlogMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                actlogMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                actlogMouseExited(evt);
+            }
+        });
+        actlog.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/logs.png"))); // NOI18N
+        actlog.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 30, 30));
+
+        lbllogout8.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
+        lbllogout8.setText("Activity Log");
+        actlog.add(lbllogout8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 140, 30));
+
+        jPanel2.add(actlog, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 310, 30));
 
         navmanage.setBackground(new java.awt.Color(255, 0, 0));
         navmanage.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -236,10 +268,8 @@ public class Dash extends javax.swing.JFrame {
                 lblnameMouseClicked(evt);
             }
         });
-        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 310, 50));
-
-        picture.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel2.add(picture, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 120, 100));
+        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 310, 50));
+        jPanel2.add(picture, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 120, 100));
 
         navstud1.setBackground(new java.awt.Color(255, 0, 0));
         navstud1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -287,7 +317,43 @@ public class Dash extends javax.swing.JFrame {
 
         jPanel2.add(rec, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 340, 310, 30));
 
+        dash.setBackground(new java.awt.Color(255, 0, 0));
+        dash.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dashMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                dashMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                dashMouseExited(evt);
+            }
+        });
+        dash.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/dash1.png"))); // NOI18N
+        dash.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 30, 30));
+
+        lbllogout9.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
+        lbllogout9.setText("Dashboard");
+        dash.add(lbllogout9, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 140, 30));
+
+        jPanel2.add(dash, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 310, 30));
+
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        javax.swing.GroupLayout activityLayout = new javax.swing.GroupLayout(activity);
+        activity.setLayout(activityLayout);
+        activityLayout.setHorizontalGroup(
+            activityLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        activityLayout.setVerticalGroup(
+            activityLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        jPanel1.add(activity, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 762, 522));
 
         jLabel8.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -389,18 +455,7 @@ public class Dash extends javax.swing.JFrame {
         }else{
             
             lblname.setText("<html><body><center>"+ses.getLast() +", "+ses.getName() +"</center></body></html>");
-            try{
-                dbconnector db = new dbconnector();
-                
-                ResultSet res = db.getData("SELECT * FROM tbl_stake WHERE id = '"+ses.getId()+"'");
-                
-                if(res.next()){
-                    picture.setIcon(ResizeImage(res.getString("pic"),null,picture));
-                    
-                }
-            }catch(SQLException e){
-                System.out.println(""+e.getLocalizedMessage());
-            }
+           
         }
     }//GEN-LAST:event_formWindowActivated
 
@@ -471,6 +526,34 @@ public class Dash extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_lblnameMouseClicked
 
+    private void actlogMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseClicked
+        logs prof = new logs();
+        activity.setVisible(true);
+        activity.add(prof).setVisible(true);
+
+    }//GEN-LAST:event_actlogMouseClicked
+
+    private void actlogMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseEntered
+          actlog.setBackground(nav);
+    }//GEN-LAST:event_actlogMouseEntered
+
+    private void actlogMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseExited
+        actlog.setBackground(def);
+                                     
+    }//GEN-LAST:event_actlogMouseExited
+
+    private void dashMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashMouseClicked
+      activity.setVisible(false);
+    }//GEN-LAST:event_dashMouseClicked
+
+    private void dashMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashMouseEntered
+        dash.setBackground(nav);
+    }//GEN-LAST:event_dashMouseEntered
+
+    private void dashMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashMouseExited
+        dash.setBackground(def);
+    }//GEN-LAST:event_dashMouseExited
+
     /**
      * @param args the command line arguments
      */
@@ -507,13 +590,18 @@ public class Dash extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDesktopPane activity;
+    private javax.swing.JPanel actlog;
+    private javax.swing.JPanel dash;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbllogout1;
@@ -521,6 +609,8 @@ public class Dash extends javax.swing.JFrame {
     private javax.swing.JLabel lbllogout4;
     private javax.swing.JLabel lbllogout5;
     private javax.swing.JLabel lbllogout6;
+    private javax.swing.JLabel lbllogout8;
+    private javax.swing.JLabel lbllogout9;
     public javax.swing.JLabel lblname;
     private javax.swing.JPanel navmanage;
     private javax.swing.JPanel navstud;

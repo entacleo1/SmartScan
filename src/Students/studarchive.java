@@ -2,7 +2,6 @@
 package Students;
 
 
-import admin.Dash;
 import admin.archives;
 import config.dbconnector;
 import config.session;
@@ -10,14 +9,9 @@ import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -45,9 +39,11 @@ public class studarchive extends javax.swing.JFrame {
        
         
     }
-   
     
-    
+    public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        db.insertData(insertQuery);
+    }
  private void filter(){
        
         
@@ -375,6 +371,7 @@ public class studarchive extends javax.swing.JFrame {
 
                     // Delete the record from the database
                     db.delete(s_id, "tbl_students", "s_id");
+                    addLogs("" +ses.getName()+ " " + "Deleted " +mod.getValueAt(row, 0));
 
                     // Delete the associated image file if it exists
                     if (picPath != null && !picPath.isEmpty()) {
@@ -416,11 +413,12 @@ public class studarchive extends javax.swing.JFrame {
                 if( a == 0){
                     db.update("UPDATE tbl_students SET s_stat = 'Active' WHERE s_id = '"+model.getValueAt(row,0)+"'",false);
                     JOptionPane.showMessageDialog(null,"Item Restored");
+                    addLogs("" +ses.getName()+ " " + "Restored " +model.getValueAt(row, 0));
                     
                 }
             DefaultTableModel def = (DefaultTableModel)studlist.getModel();
             def.setRowCount(0);
-            tb();
+            
         }
     }//GEN-LAST:event_jLabel5MouseClicked
 

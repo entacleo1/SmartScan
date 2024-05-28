@@ -9,7 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import user.user_dash;
 
@@ -21,28 +25,31 @@ public class Login extends javax.swing.JFrame {
         setUndecorated(true);
         initComponents(); 
     
-         addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == KeyEvent.VK_F1) {
-                   tagTimer();      
-                }
+        Action f1Action = new AbstractAction() {
+        @Override
+            public void actionPerformed(ActionEvent e) {
+               tagTimer();
+                
             }
-        });
+        };
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "F1_pressed");
+        this.getRootPane().getActionMap().put("F1_pressed", f1Action);
              
         setFocusable(true);
         
-        addKeyListener(new java.awt.event.KeyAdapter() { 
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == KeyEvent.VK_F2) {
-                    attendance op = new attendance();
-                    op.setVisible(true);
-                    op.action = "login";
-                    dispose();       
-                }
+        Action f2Action = new AbstractAction() {
+        @Override
+            public void actionPerformed(ActionEvent e) {
+               attendance op = new attendance();
+               
+               op.setVisible(true);
+               op.action = "login";
+               dispose();
+                
             }
-        });
+        };
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "F2_pressed");
+        this.getRootPane().getActionMap().put("F2_pressed", f2Action);
              
         setFocusable(true);
        

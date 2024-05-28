@@ -55,6 +55,11 @@ public class newstud extends javax.swing.JFrame {
     public String oldpath;
     public String path;
     
+       public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        boolean rowsInserted = con.insertData(insertQuery);
+    }
+    
      private void id_increment(){
         
         try{
@@ -439,8 +444,8 @@ public class newstud extends javax.swing.JFrame {
                     String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
                     
                    
-                    String sql = "INSERT INTO tbl_students(s_id, s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add, s_pic, s_stat) "
-                            + "VALUES ('"+txtid.getText()+"','"+txttag.getText()+"','"+txtlast.getText()+"','"+txtmid.getText()+"',"
+                    String sql = "INSERT INTO tbl_students(s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add, s_pic, s_stat) "
+                            + "VALUES ('"+txttag.getText()+"','"+txtlast.getText()+"','"+txtmid.getText()+"',"
                             + "'"+txtname.getText()+"','"+txtsec.getSelectedItem()+"','"+txtgrade.getSelectedItem()+"',"
                             + "'"+bday+"','"+gender+"','"+txtmobile.getText()+"','"+txtguard.getText()+"',"
                             + "'"+txtadd.getText()+"','"+destination+"','"+txtstat.getSelectedItem()+"')";
@@ -456,7 +461,7 @@ public class newstud extends javax.swing.JFrame {
                               System.out.println(""+e.getLocalizedMessage());
                      
                         }
-                        
+                        addLogs("" +ses.getName()+ " " + " Added A new Student");
                         txtsec.removeAllItems();
                         txttag.setText("");
                         txtid.setText("");
@@ -485,6 +490,7 @@ public class newstud extends javax.swing.JFrame {
                             + "s_guard  ='"+txtguard.getText()+"', s_add  ='"+txtadd.getText()+"', "
                             + "s_pic = '"+destination+"', s_stat = '"+txtstat.getSelectedItem()+"'"
                             + "WHERE s_id = '"+txtid.getText()+"'");
+                addLogs("" +ses.getName()+ " " + " Updated" +txtid.getText());
                 
                 if(destination.isEmpty()){
                     File existing = new File(oldpath);

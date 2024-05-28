@@ -41,6 +41,11 @@ public class addstud extends javax.swing.JFrame {
         statshow();
         
     }
+    public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        boolean rowsInserted = db.insertData(insertQuery);
+    }
+    
     private void statshow(){
         try{
             ResultSet res = db.getData("SELECT * FROM tbl_stake WHERE position = '"+ses.getPos()+"'");
@@ -52,6 +57,7 @@ public class addstud extends javax.swing.JFrame {
                     System.out.println("Revealed");
                 }else{
                     man.hide();
+                    arch.hide();
                 }
             }
         }catch(SQLException e){
@@ -135,7 +141,7 @@ public class addstud extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         lblback = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        arch = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         section = new javax.swing.JComboBox<>();
         gradelvl = new javax.swing.JComboBox<>();
@@ -166,14 +172,14 @@ public class addstud extends javax.swing.JFrame {
         });
         jPanel1.add(lblback, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 0, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel1.setText("Arcihive");
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+        arch.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        arch.setText("Arcihive");
+        arch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel1MouseClicked(evt);
+                archMouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 70, -1, -1));
+        jPanel1.add(arch, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 70, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("DialogInput", 1, 14)); // NOI18N
         jLabel2.setText("Student MasterList");
@@ -318,7 +324,7 @@ public class addstud extends javax.swing.JFrame {
         newstud stud = new newstud();   
         
         stud.setVisible(true);
-        JFrame mainFrame = (JFrame)SwingUtilities.getWindowAncestor(this);
+    
         this.dispose();
         
         stud.action = "Add";
@@ -415,6 +421,7 @@ public class addstud extends javax.swing.JFrame {
           int a = JOptionPane.showConfirmDialog(null,"Are you Sure You want to Delete ID " + id , "Select", JOptionPane.YES_NO_OPTION);
           if( a == 0){
             db.update("UPDATE tbl_students SET s_stat = 'Archive' WHERE s_id ='"+id+"'",false);
+            addLogs("" +ses.getName()+ " " + "Archived " +model.getValueAt(row, 0));
           }
           DefaultTableModel def = (DefaultTableModel)studlist.getModel();
           def.setRowCount(0);
@@ -583,11 +590,11 @@ public class addstud extends javax.swing.JFrame {
        this.dispose();
     }//GEN-LAST:event_manMouseClicked
 
-    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+    private void archMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_archMouseClicked
         studarchive op = new studarchive();
         op.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_jLabel1MouseClicked
+    }//GEN-LAST:event_archMouseClicked
 
     /**
      * @param args the command line arguments
@@ -626,9 +633,9 @@ public class addstud extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel add;
+    private javax.swing.JLabel arch;
     private javax.swing.JLabel del;
     private javax.swing.JComboBox<String> gradelvl;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

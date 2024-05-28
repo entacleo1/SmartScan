@@ -7,9 +7,11 @@ package javaapplication20;
 
 import admin.Dash;
 import config.dbconnector;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,12 +19,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import user.user_dash;
 
@@ -30,13 +34,14 @@ import user.user_dash;
  *
  * @author entac
  */
-public class attendance extends javax.swing.JFrame {
+public final class attendance extends javax.swing.JFrame {
 
     /**
      * Creates new form attendance
      */
     
-       
+  
+            ;   
     public String action;
     String pic1path = "";
     String oldpath = "";
@@ -44,11 +49,71 @@ public class attendance extends javax.swing.JFrame {
     public attendance() {
         setUndecorated(true);
         initComponents();  
+        
+        Action escAction = new AbstractAction() {
+        @Override
+            public void actionPerformed(ActionEvent e) {
+              switch(action){
+                  case "login":
+                      Login lg = new Login();
+                      
+                      lg.setVisible(true);
+                      dispose();
+                      
+                      break;
+                      
+                  case "dash" :
+                      Dash dh = new Dash();
+                      
+                      dh.setVisible(true);
+                      dispose();
+                      
+                      break;
+                      
+                      
+              }
+                
+            }
+        };
+        this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Escape_pressed");
+        this.getRootPane().getActionMap().put("Escape_pressed", escAction);
+        
+          
+        setFocusable(true);
         tag.requestFocus();
-        date();
         time();
+        RunningJLabel();
+        date();
+        
+      
         
     } 
+    
+      
+   
+    
+    int xCoordinate;
+    int yCoordinate;
+    
+     public void RunningJLabel() {
+      
+        xCoordinate = 0; // Start from the left
+        yCoordinate = getContentPane().getHeight() -30; // Start from the bottom
+        
+        move.setBounds(xCoordinate, yCoordinate, 400, 30);
+        move.setText("WELCOME CECILIANS, ALLEVO!!!");
+        Timer timer = new Timer(50, (ActionEvent e) -> {
+            xCoordinate += 2; // Change the increment value to control the speed
+            move.setBounds(xCoordinate, yCoordinate, 400, 30);
+            if (xCoordinate >= getContentPane().getWidth()) {
+                xCoordinate = -400; // Reset position when JLabel moves out of JFrame
+            }
+        });
+        timer.start();
+    }
+
+
+    
  
     
     private void date(){
@@ -83,46 +148,28 @@ public class attendance extends javax.swing.JFrame {
         t.start();
         
     }
-     public static int getHeightFromWidth(String imagePath, int desiredWidth) {
-        try {
-            // Read the image file
-            File imageFile = new File(imagePath);
-            BufferedImage image = ImageIO.read(imageFile);
-            
-            // Get the original width and height of the image
-            int originalWidth = image.getWidth();
-            int originalHeight = image.getHeight();
-            
-            // Calculate the new height based on the desired width and the aspect ratio
-            int newHeight = (int) ((double) desiredWidth / originalWidth * originalHeight);
-            
-            return newHeight;
-        } catch (IOException ex) {
-            System.out.println("No image found!");
-        }
-        
-        return -1;
-    }
-    
-    
-    public  ImageIcon ResizeImage(String ImagePath, byte[] pic, JLabel label) {
-    ImageIcon MyImage = null;
-        if(ImagePath !=null){
-            MyImage = new ImageIcon(ImagePath);
-        }else{
-            MyImage = new ImageIcon(pic);
-        }
-        
-    int newHeight = getHeightFromWidth(ImagePath, label.getWidth());
+        public static int getHeightFromWidth(ImageIcon imageIcon, int desiredWidth) {
+        // Get the original width and height of the image
+        int originalWidth = imageIcon.getIconWidth();
+        int originalHeight = imageIcon.getIconHeight();
 
-    Image img = MyImage.getImage();
-    Image newImg = img.getScaledInstance(label.getWidth(), newHeight, Image.SCALE_SMOOTH);
-    ImageIcon image = new ImageIcon(newImg);
-    return image;
-    
+        // Calculate the new height based on the desired width and the aspect ratio
+        int newHeight = (int) ((double) desiredWidth / originalWidth * originalHeight);
+        return newHeight;
 }
-    
 
+        public ImageIcon ResizeImage(ImageIcon imageIcon, JLabel label) {
+            if (imageIcon == null) {
+                return null; // Handle null case
+            }
+
+            int newHeight = getHeightFromWidth(imageIcon, label.getWidth());
+
+            // Scale the image to fit the label's width while maintaining aspect ratio
+            Image img = imageIcon.getImage();
+            Image newImg = img.getScaledInstance(label.getWidth(), newHeight, Image.SCALE_SMOOTH);
+            return new ImageIcon(newImg);
+        }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -156,6 +203,9 @@ public class attendance extends javax.swing.JFrame {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
             }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
         });
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -167,19 +217,19 @@ public class attendance extends javax.swing.JFrame {
         pic.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel1.add(pic, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 150, 240, 220));
 
-        name.setFont(new java.awt.Font("DialogInput", 1, 36)); // NOI18N
+        name.setFont(new java.awt.Font("DialogInput", 1, 28)); // NOI18N
         name.setText("0");
         jPanel1.add(name, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 210, -1, -1));
 
-        grade.setFont(new java.awt.Font("DialogInput", 1, 36)); // NOI18N
+        grade.setFont(new java.awt.Font("DialogInput", 1, 28)); // NOI18N
         grade.setText("0");
         jPanel1.add(grade, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 270, -1, -1));
 
-        attend.setFont(new java.awt.Font("DialogInput", 1, 36)); // NOI18N
+        attend.setFont(new java.awt.Font("DialogInput", 1, 28)); // NOI18N
         attend.setText("0");
         jPanel1.add(attend, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 340, -1, -1));
 
-        id.setFont(new java.awt.Font("DialogInput", 1, 36)); // NOI18N
+        id.setFont(new java.awt.Font("DialogInput", 1, 28)); // NOI18N
         id.setText("0");
         jPanel1.add(id, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 140, -1, -1));
 
@@ -210,13 +260,13 @@ public class attendance extends javax.swing.JFrame {
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, -1, -1));
 
         pic3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.add(pic3, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 420, 130, 100));
+        jPanel1.add(pic3, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 390, 160, 130));
 
         pic2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.add(pic2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 420, 130, 100));
+        jPanel1.add(pic2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 390, 160, 130));
 
         pic1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.add(pic1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 420, 130, 100));
+        jPanel1.add(pic1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 390, 160, 130));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/final1.jpg"))); // NOI18N
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 530));
@@ -230,8 +280,8 @@ public class attendance extends javax.swing.JFrame {
 
         move.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         move.setForeground(new java.awt.Color(204, 0, 0));
-        move.setText("WELCOME CECILIANS, ALEVO!!!");
-        jPanel1.add(move, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 530, 390, 30));
+        move.setText("0");
+        jPanel1.add(move, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 530, 30, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -250,20 +300,29 @@ public class attendance extends javax.swing.JFrame {
 
     private void tagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagActionPerformed
         dbconnector db = new dbconnector();
-        int picins = 0;
+      
         try{
             ResultSet res = db.getData("SELECT * FROM tbl_students WHERE s_stat = 'Active' AND s_tag = '"+tag.getText()+"'");
-
+          
             if(res.next()){
-                String tagno = res.getString("s_tag");
+                
                 String n = res.getString("s_name");
                 String l = res.getString("s_last"); 
-                String m = res.getString("s_mi");
-
+                String m = res.getString("s_mi");   
                 name.setText(l + ", " + n + " " + m);
-                pic.setIcon(ResizeImage(res.getString("s_pic"), null , pic));
-               
- 
+                
+                ImageIcon[] previousImages = new ImageIcon[3];
+                previousImages[0] = (ImageIcon) pic.getIcon();
+                previousImages[1] = (ImageIcon) pic1.getIcon();
+                previousImages[2] = (ImageIcon) pic2.getIcon();
+                
+                ImageIcon newImageIcon = ResizeImage(new ImageIcon(res.getString("s_pic")), pic);
+                pic.setIcon(newImageIcon);
+                
+                pic1.setIcon(ResizeImage(previousImages[0], pic1));
+                pic2.setIcon(ResizeImage(previousImages[1], pic2));
+                pic3.setIcon(ResizeImage(previousImages[2], pic3));
+                
                 grade.setText(res.getString("s_grade"));
                 id.setText(res.getString("s_id"));
                 tag.setText("");
@@ -278,10 +337,10 @@ public class attendance extends javax.swing.JFrame {
                     attend.setText("Logout");
                 }
                 else {
-                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, time_in, time_out, date) "
+                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, pos_type, time_in, time_out, date) "
                             + "VALUES('student', " + res.getInt("s_id") + ",'"+res.getString("s_tag")+"','"+res.getString("s_last")+"',"
                             + "'"+res.getString("s_mi")+"','"+res.getString("s_name")+"','"+res.getString("s_grade")+"',"
-                            + " CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
+                            + " '"+res.getString("s_section")+"',CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
                     attend.setText("Login");
                 }
             }else{
@@ -293,10 +352,19 @@ public class attendance extends javax.swing.JFrame {
                     String m = stakeRes.getString("mid");
 
                     name.setText(l + ", " + n + " " + m);
-                    pic.setIcon(ResizeImage(stakeRes.getString("pic"), null , pic));
-                   
                     
-
+                    ImageIcon[] previousImages = new ImageIcon[3];
+                    previousImages[0] = (ImageIcon) pic.getIcon();
+                    previousImages[1] = (ImageIcon) pic1.getIcon();
+                    previousImages[2] = (ImageIcon) pic2.getIcon();
+                    
+                    ImageIcon newImageIcon = ResizeImage(new ImageIcon(stakeRes.getString("pic")), pic);
+                    pic.setIcon(newImageIcon);
+                    
+                    pic1.setIcon(ResizeImage(previousImages[0], pic1));
+                    pic2.setIcon(ResizeImage(previousImages[1], pic2));
+                    pic3.setIcon(ResizeImage(previousImages[2], pic3));
+                    
                     grade.setText(stakeRes.getString("pos_type"));
                     id.setText(stakeRes.getString("id"));
                     tag.setText("");
@@ -309,10 +377,10 @@ public class attendance extends javax.swing.JFrame {
                     attend.setText("Logout");
                 }
                 else {
-                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, time_in, time_out, date) "
+                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, pos_type, time_in, time_out, date) "
                             + "VALUES('stake', " + stakeRes.getInt("id") + ",'"+stakeRes.getString("tag")+"','"+stakeRes.getString("last")+"',"
                             + "'"+stakeRes.getString("mid")+"','"+stakeRes.getString("name")+"','"+stakeRes.getString("position")+"',"
-                            + " CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
+                            + " '"+stakeRes.getString("pos_type")+"',CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
                     attend.setText("Login");
                 }
                 }
@@ -331,7 +399,7 @@ public class attendance extends javax.swing.JFrame {
         }catch(SQLException e){
             tag.setText("");
             System.out.println(""+e.getLocalizedMessage());
-        }
+        } 
     }//GEN-LAST:event_tagActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
@@ -361,25 +429,13 @@ public class attendance extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-         Thread animation = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int x = 20;
-                int y = 30;
-                
-                while(true){
-                    
-                    move.setLocation(x,y);
-                    x +=10;
-                    try{
-                    Thread.sleep(200);
-                    }catch(Exception e){
-                        
-                    }
-                }
-            }
-        });
+     
+    
     }//GEN-LAST:event_formWindowActivated
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments

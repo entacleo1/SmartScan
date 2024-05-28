@@ -7,6 +7,7 @@ package Students;
 
 import admin.*;
 import config.dbconnector;
+import config.session;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class manage extends javax.swing.JFrame {
      */
     
     public dbconnector db = new dbconnector();
+    session ses = session.getInstance();
     
     public manage() {
         initComponents();
@@ -31,6 +33,12 @@ public class manage extends javax.swing.JFrame {
         grade();
         
     }
+     
+    public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        boolean rowsInserted = db.insertData(insertQuery);
+    }
+           
     
     public void grade(){
       
@@ -251,6 +259,7 @@ public class manage extends javax.swing.JFrame {
                 db.insertData(add);
                 JOptionPane.showMessageDialog(null,"Section Saved");
                 txtsec.setText("");
+                addLogs("" +ses.getName()+ " " + " Added a Section " +txtsec.getText()+" Under the Grade Level "+gradelvl.getSelectedItem());
           
             }
            
@@ -280,6 +289,7 @@ public class manage extends javax.swing.JFrame {
            if(l == 0){
                int s_id = Integer.parseInt(id);
                db.delete(s_id,"tbl_gradelvl","num");
+               addLogs("" +ses.getName()+ " " + " Deleted " +mod.getValueAt(row, 1 )+" Section "+mod.getValueAt(row, 2));
            }
            DefaultTableModel def = (DefaultTableModel)list.getModel();
            def.setRowCount(0);

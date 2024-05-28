@@ -13,13 +13,17 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javaapplication20.*;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 
@@ -53,7 +57,7 @@ public class user_dash extends javax.swing.JFrame {
         
         Date d = new Date();
         
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MM,dd,yyyy");
          
         String dt = sdf.format(d);
         txtdate.setText(dt);
@@ -132,7 +136,8 @@ public class user_dash extends javax.swing.JFrame {
         txtdate = new javax.swing.JLabel();
         txttime = new javax.swing.JLabel();
         lblname = new javax.swing.JLabel();
-        picture = new javax.swing.JLabel();
+        session ses = session.getInstance();
+        picture = new config.CircularImageLabel(ses.getPic());
         rec = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         lbllogout6 = new javax.swing.JLabel();
@@ -167,12 +172,12 @@ public class user_dash extends javax.swing.JFrame {
         txtdate.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         txtdate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txtdate.setText("    jLabel1");
-        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 200, 310, -1));
+        jPanel2.add(txtdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 310, -1));
 
         txttime.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         txttime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txttime.setText("    jLabel1");
-        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 230, 310, -1));
+        jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 310, -1));
 
         lblname.setFont(new java.awt.Font("DialogInput", 1, 18)); // NOI18N
         lblname.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -184,10 +189,8 @@ public class user_dash extends javax.swing.JFrame {
                 lblnameMouseClicked(evt);
             }
         });
-        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 310, 50));
-
-        picture.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel2.add(picture, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 120, 100));
+        jPanel2.add(lblname, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 310, 50));
+        jPanel2.add(picture, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, 120, 120));
 
         rec.setBackground(new java.awt.Color(255, 0, 0));
         rec.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -292,18 +295,7 @@ public class user_dash extends javax.swing.JFrame {
         }else{
             
             lblname.setText("<html><body><center>"+ses.getLast() +", "+ses.getName() +"</center></body></html>");
-            try{
-                dbconnector db = new dbconnector();
-                
-                ResultSet res = db.getData("SELECT * FROM tbl_stake WHERE id = '"+ses.getId()+"'");
-                
-                if(res.next()){
-                    picture.setIcon(ResizeImage(res.getString("pic"),null,picture));
-                    
-                }
-            }catch(SQLException e){
-                System.out.println(""+e.getLocalizedMessage());
-            }
+          
         }
     }//GEN-LAST:event_formWindowActivated
 
@@ -324,7 +316,52 @@ public class user_dash extends javax.swing.JFrame {
     }//GEN-LAST:event_recMouseExited
 
     private void lblnameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblnameMouseClicked
-     
+       update up = new update();
+       up.idno.setText(""+ses.getId());
+    
+        up.txtname.setText(ses.getName());
+        up.txtmid.setText(ses.getMid());
+        up.txtlast.setText(ses.getLast());
+        up.txtuser.setText(ses.getUser());
+        up.txttag.setText(ses.getTag());
+        up.txtadd.setText(ses.getAdd());
+        up.txtemail.setText(ses.getEmail());
+        String dateString = ses.getBday(); 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Date bdayDate = dateFormat.parse(dateString);
+                    up.txtbday.setDate(bdayDate);
+                    
+                    dbconnector db = new dbconnector();
+                    
+                    ResultSet res = db.getData("SELECT pic FROM tbl_stake WHERE id = '"+up.idno.getText()+"'");
+                   
+                    if(res.next()){
+                        
+                        
+                        up.lblpic.setIcon(up.ResizeImage(res.getString("pic"), null, up.lblpic));
+                        up.oldpath = res.getString("pic");
+                        up.path = res.getString("pic");
+                        up.destination = res.getString("pic");
+                    }
+                    
+                    
+                } catch (SQLException | ParseException ex) {
+                    Logger.getLogger(Dash.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+        });
+        
+        up.gender = ses.getGender();
+        
+        up.lblchange.setText("Change Password");
+        up.action = "user";
+        up.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_lblnameMouseClicked
 
     private void navstud1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_navstud1MouseClicked

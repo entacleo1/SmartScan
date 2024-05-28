@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import user.user_dash;
 
 /**
  *
@@ -33,10 +32,30 @@ public class stakes extends javax.swing.JFrame {
         initComponents();
         tb();
         showarch();
+        filter();
     }
     dbconnector db = new dbconnector();
     public String action;
     session ses = session.getInstance();
+    
+    public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        db.insertData(insertQuery);
+    }
+    
+    private void filter(){
+        try{
+            ResultSet res = db.getData("SELECT DISTINCT pos_type FROM tbl_stake WHERE status = 'Active'");
+            
+            while(res.next()){
+              
+                pos.addItem(res.getString("pos_type"));
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(stakes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
       private void tb() {
    
@@ -57,12 +76,9 @@ public class stakes extends javax.swing.JFrame {
             String gender = res.getString("gender");
             String address = res.getString("address");
             String stat = res.getString("status");
-            String pos = res.getString("pos_type");
-                  
-          
+            String posi = res.getString("pos_type");
             
-
-            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stat,pos};
+            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stat,posi};
 
             DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
             tblmod.addRow(table);
@@ -116,6 +132,7 @@ public class stakes extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        pos = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         rec_list = new javax.swing.JTable();
@@ -160,10 +177,10 @@ public class stakes extends javax.swing.JFrame {
                 txtsearchKeyReleased(evt);
             }
         });
-        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 60, 200, -1));
+        jPanel1.add(txtsearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 60, 200, -1));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/search.png"))); // NOI18N
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 30, 20));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 60, 30, 20));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/kilid.jpg"))); // NOI18N
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, -10, -1, 110));
@@ -184,7 +201,7 @@ public class stakes extends javax.swing.JFrame {
                 archMouseClicked(evt);
             }
         });
-        jPanel1.add(arch, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 60, -1, -1));
+        jPanel1.add(arch, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 60, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/update.png"))); // NOI18N
@@ -215,7 +232,15 @@ public class stakes extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel9.setText("Any Key or TAG#");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, -1, -1));
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 40, -1, -1));
+
+        pos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All Positions" }));
+        pos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                posActionPerformed(evt);
+            }
+        });
+        jPanel1.add(pos, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 50, 100, 30));
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -290,12 +315,9 @@ public class stakes extends javax.swing.JFrame {
             String gender = res.getString("gender");
             String address = res.getString("address");
             String stats = res.getString("status");
-            String pos = res.getString("pos_type");
-                  
-          
-            
+            String posi = res.getString("pos_type");  
 
-            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stats,pos};  
+            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stats,posi};  
             
             DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
             model.addRow(table);
@@ -337,12 +359,9 @@ public class stakes extends javax.swing.JFrame {
             String gender = res.getString("gender");
             String address = res.getString("address");
             String stats = res.getString("status");
-            String pos = res.getString("pos_type");
-                  
-          
+            String posi = res.getString("pos_type");
             
-
-            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stats,pos};  
+            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stats,posi};  
             
             DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
             model.addRow(table);
@@ -358,13 +377,9 @@ public class stakes extends javax.swing.JFrame {
     }//GEN-LAST:event_filterActionPerformed
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-  
-       Dash op = new Dash();
-
+        Dash op = new Dash();
         op.setVisible(true);
-        this.dispose();
-               
-       
+        this.dispose();    
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
@@ -407,8 +422,7 @@ public class stakes extends javax.swing.JFrame {
                
            } catch (ParseException | SQLException ex) {
                 Logger.getLogger(stakes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
+            }  
             
             SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -439,11 +453,10 @@ public class stakes extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel6MouseClicked
 
     private void jLabel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseEntered
-        // TODO add your handling code here:
+     
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-      
         int row = rec_list.getSelectedRow();
         
         if(row < 0 ){
@@ -454,9 +467,8 @@ public class stakes extends javax.swing.JFrame {
           if( a == 0){
             db.update("UPDATE tbl_stake SET status = 'Archive' WHERE id = '"+mod.getValueAt(row,0)+"'",false);
             JOptionPane.showMessageDialog(null,"Item Deleted");
-          }
-            
-            
+            addLogs("" +ses.getName()+ " " + "Archived " +mod.getValueAt(row, 0));
+          }   
         }
     }//GEN-LAST:event_jLabel4MouseClicked
 
@@ -475,12 +487,53 @@ public class stakes extends javax.swing.JFrame {
     }//GEN-LAST:event_archMouseClicked
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-       
         DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
         model.setRowCount(0);
-        tb();      
-        
+        tb(); 
     }//GEN-LAST:event_jLabel7MouseClicked
+
+    private void posActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_posActionPerformed
+        if(pos.getSelectedItem().equals("All Positions")){
+           DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
+            model.setRowCount(0);
+            tb();
+        }else{
+            String stat = pos.getSelectedItem().toString();
+            String sql = "SELECT * FROM tbl_stake WHERE status LIKE '%" + stat + "%' ORDER BY last";
+        try {
+      
+        
+        ResultSet res = db.getData(sql);
+      
+        DefaultTableModel tblmod = (DefaultTableModel)rec_list.getModel();
+        tblmod.setRowCount(0);
+        
+        while (res.next()) {
+            
+            String id = String.valueOf(res.getString("id"));
+            String tag = res.getString("tag");
+            String last = res.getString("last");
+            String mid = res.getString("mid");
+            String first = res.getString("name");
+            String email = res.getString("email");
+            String dob = res.getString("bod");
+            String gender = res.getString("gender");
+            String address = res.getString("address");
+            String stats = res.getString("status");
+            String posi = res.getString("pos_type");        
+
+            String table[] = {id,tag,last,mid,first,email,dob,gender,address,stats,posi};  
+            
+            DefaultTableModel model = (DefaultTableModel)rec_list.getModel();
+            model.addRow(table);
+          
+        }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+      }
+    }//GEN-LAST:event_posActionPerformed
 
     /**
      * @param args the command line arguments
@@ -533,6 +586,7 @@ public class stakes extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox<String> pos;
     private javax.swing.JTable rec_list;
     private javax.swing.JTextField txtsearch;
     // End of variables declaration//GEN-END:variables

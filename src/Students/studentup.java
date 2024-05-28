@@ -6,7 +6,7 @@
 package Students;
 
 import config.dbconnector;
-import java.sql.PreparedStatement;
+import config.session;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,12 +27,17 @@ public final class studentup extends javax.swing.JFrame {
      */
     
     public dbconnector db = new dbconnector();
-    
+    session ses = session.getInstance();
     public studentup() {
         initComponents();
         tb();
     }
     public static String del;
+    
+       public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        boolean rowsInserted = db.insertData(insertQuery);
+    }
     public boolean duplicate(){
         try{
         
@@ -179,8 +184,7 @@ public final class studentup extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lblbackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblbackMouseClicked
-
-        this.dispose();
+     this.dispose();
     }//GEN-LAST:event_lblbackMouseClicked
 
     private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
@@ -192,6 +196,7 @@ public final class studentup extends javax.swing.JFrame {
          if(db.insertData("INSERT INTO tbl_gradelvl (lvl,section) VALUES('"+grade.getText()+"', 'A')")){
              JOptionPane.showMessageDialog(null,"Record Saved");
              DefaultTableModel def = (DefaultTableModel)gradelist.getModel();
+             addLogs("" +ses.getName()+ " " + "Added a Grade Level " +grade.getText());
              def.setRowCount(0);
              tb();
          }else{
@@ -220,19 +225,13 @@ public final class studentup extends javax.swing.JFrame {
                 
                     int s_id = Integer.parseInt(id);
                     db.delete(s_id,"tbl_gradelvl","num");
+                    addLogs("" +ses.getName()+ " " + " Deleted " +mod.getValueAt(row, 0 ));
                     
-               
                  }
-                }
-             
-              
+            }        
            } catch (SQLException ex) {
                 Logger.getLogger(studentup.class.getName()).log(Level.SEVERE, null, ex);
-            }
-          
-           
-           
-         
+            } 
         
           DefaultTableModel def = (DefaultTableModel)gradelist.getModel();
            def.setRowCount(0);

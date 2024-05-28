@@ -54,6 +54,12 @@ public class newadmin extends javax.swing.JFrame {
     public String oldpath;
     public String path;
     
+    
+    public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        boolean rowsInserted = con.insertData(insertQuery);
+    }
+    
     private void id_increment(){
         
         try{
@@ -429,6 +435,7 @@ public class newadmin extends javax.swing.JFrame {
                          System.out.println(""+e.getLocalizedMessage());
 
                      }
+                    addLogs("" +ses.getName()+ " " + "Added A new "+pos.getSelectedItem());
                     JOptionPane.showMessageDialog(null,"Saved");
                     txttag.setText("");
                     txtname.setText("");
@@ -456,6 +463,8 @@ public class newadmin extends javax.swing.JFrame {
                         + " address = '"+txtadd.getText()+"', pic = '"+destination+"', status = '"+txtstat.getSelectedItem()+"', "
                         + "position = '"+pos.getSelectedItem()+"', pos_type = '"+postype.getText()+"'"
                         + "WHERE id = '"+txtid.getText()+"'");
+                
+                addLogs("" +ses.getName()+ " " + "Updated " +txtid.getText());
                 
                 if(destination.isEmpty()){
                     File existing = new File(oldpath);
