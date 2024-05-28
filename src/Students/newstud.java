@@ -490,7 +490,7 @@ public class newstud extends javax.swing.JFrame {
                             + "s_guard  ='"+txtguard.getText()+"', s_add  ='"+txtadd.getText()+"', "
                             + "s_pic = '"+destination+"', s_stat = '"+txtstat.getSelectedItem()+"'"
                             + "WHERE s_id = '"+txtid.getText()+"'");
-                addLogs("" +ses.getName()+ " " + " Updated" +txtid.getText());
+                addLogs("" +ses.getName()+ " " + " Updated Student " +txtid.getText());
                 
                 if(destination.isEmpty()){
                     File existing = new File(oldpath);

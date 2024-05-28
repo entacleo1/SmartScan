@@ -371,7 +371,7 @@ public class studarchive extends javax.swing.JFrame {
 
                     // Delete the record from the database
                     db.delete(s_id, "tbl_students", "s_id");
-                    addLogs("" +ses.getName()+ " " + "Deleted " +mod.getValueAt(row, 0));
+                    addLogs("" +ses.getName()+ " " + "Deleted Student " +mod.getValueAt(row, 0));
 
                     // Delete the associated image file if it exists
                     if (picPath != null && !picPath.isEmpty()) {
@@ -413,7 +413,7 @@ public class studarchive extends javax.swing.JFrame {
                 if( a == 0){
                     db.update("UPDATE tbl_students SET s_stat = 'Active' WHERE s_id = '"+model.getValueAt(row,0)+"'",false);
                     JOptionPane.showMessageDialog(null,"Item Restored");
-                    addLogs("" +ses.getName()+ " " + "Restored " +model.getValueAt(row, 0));
+                    addLogs("" +ses.getName()+ " " + "Restored Student " +model.getValueAt(row, 0));
                     
                 }
             DefaultTableModel def = (DefaultTableModel)studlist.getModel();

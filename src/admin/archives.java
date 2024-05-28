@@ -6,6 +6,7 @@
 package admin;
 
 import config.dbconnector;
+import config.session;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +34,7 @@ public class archives extends javax.swing.JFrame {
         initComponents();
         tb();
     }
+    session ses = session.getInstance();
     dbconnector db = new dbconnector();
     public String action;
      public String destination = "";
@@ -40,6 +42,11 @@ public class archives extends javax.swing.JFrame {
    
     public String oldpath;
     public String path;
+    
+      public void addLogs(String action){
+        String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
+        db.insertData(insertQuery);
+    }
     
       private void tb() {
    
@@ -319,6 +326,7 @@ public class archives extends javax.swing.JFrame {
                 TableModel model = rec_list.getModel();
                 int a = JOptionPane.showConfirmDialog(null,"Are you Sure You want to Retrieve " + model.getValueAt(row, 0) , "Select", JOptionPane.YES_NO_OPTION);
                 if( a == 0){
+                     addLogs("" +ses.getName()+ " " + "Restored User " +model.getValueAt(row, 0));
                     db.update("UPDATE tbl_stake SET status = 'Active' WHERE id = '"+model.getValueAt(row,0)+"'",false);
                     JOptionPane.showMessageDialog(null,"Item Restored");
                 }

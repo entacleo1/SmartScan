@@ -35,7 +35,7 @@ public class logs extends javax.swing.JInternalFrame {
         try{
             
         
-        ResultSet res = db.getData("SELECT * FROM act_logs");
+        ResultSet res = db.getData("SELECT * FROM act_logs ");
         
         while(res.next()){
             String time = res.getString("time");
