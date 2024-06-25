@@ -36,7 +36,7 @@ public final class studentup extends javax.swing.JFrame {
     
        public void addLogs(String action){
         String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
-        boolean rowsInserted = db.insertData(insertQuery);
+       
     }
     public boolean duplicate(){
         try{
@@ -65,9 +65,7 @@ public final class studentup extends javax.swing.JFrame {
         try{
             
             Statement st = db.connect.createStatement();
-            String sq = "SELECT DISTINCT lvl, COUNT(section)as sec FROM tbl_gradelvl GROUP BY lvl ORDER BY lvl";
-            ResultSet res = st.executeQuery(sq);
-            
+            ResultSet res = db.getData("SELECT DISTINCT lvl, COUNT(section)as sec FROM tbl_gradelvl GROUP BY lvl ORDER BY lvl");
             while(res.next()){
                 String lvl = res.getString("lvl");
                 String count = res.getString("sec");
@@ -213,10 +211,10 @@ public final class studentup extends javax.swing.JFrame {
          TableModel mod = gradelist.getModel();
                
            try{
-               ResultSet res = db.getData("SELECT * FROM tbl_gradelvl WHERE lvl = '"+mod.getValueAt(row, 0 )+"'");
+               ResultSet res = db.getData("SELECT * FROM tbl_grades WHERE grade_name = '"+mod.getValueAt(row, 0 )+"'");
                
                if(res.next()){
-                 Object val = res.getString("num");
+                 Object val = res.getString("grade_id");
                  String id = val.toString();
                
                  int l = JOptionPane.showConfirmDialog(null, "If you Delete this all section under This Grade will be deleted", "Select", JOptionPane.YES_NO_OPTION);
@@ -224,12 +222,13 @@ public final class studentup extends javax.swing.JFrame {
                  if(l == 0){
                 
                     int s_id = Integer.parseInt(id);
-                    db.delete(s_id,"tbl_gradelvl","num");
+                    db.delete(s_id,"tbl_gradelvl","num");       
                     addLogs("" +ses.getName()+ " " + " Deleted " +mod.getValueAt(row, 0 ));
                     
                  }
             }        
            } catch (SQLException ex) {
+              
                 Logger.getLogger(studentup.class.getName()).log(Level.SEVERE, null, ex);
             } 
         

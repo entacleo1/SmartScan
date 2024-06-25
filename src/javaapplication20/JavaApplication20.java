@@ -6,6 +6,7 @@
 package javaapplication20;
 
 import config.hasher;
+import config.smsSender;
 import java.util.Scanner;
 
 
@@ -19,7 +20,10 @@ public class JavaApplication20 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       new Login().setVisible(true);
+       smsSender sms = new smsSender();
+       
+       sms.initialize();
+       sms.sendSMS("+639687530915","Student Log Out");
        
      
     }

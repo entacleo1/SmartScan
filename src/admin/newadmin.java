@@ -20,7 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -424,10 +423,10 @@ public class newadmin extends javax.swing.JFrame {
                    String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
 
 
-                if (con.insertData("INSERT INTO tbl_stake (id,tag, name, mid, last, email, bod, gender, address, user, pass, pic, status, position, pos_type)"
+                if (con.insertData("INSERT INTO tbl_stake (id,tag, name, mid, last, email, bod, gender, address, user, pass, pic, status, position, pos_type,identification)"
                          + "VALUES ('"+txtid.getText()+"','"+txttag.getText()+"','"+txtname.getText()+"', '"+txtmid.getText()+"','"+txtlast.getText()+"',"
                          + "'"+txtemail.getText()+"','"+bday+"', '"+gender+"', '"+txtadd.getText()+"', '"+user+"',"
-                         + "'"+pass+"', '"+destination+"', '"+txtstat.getSelectedItem()+"', '"+pos.getSelectedItem()+"','"+postype.getText()+"')")) 
+                         + "'"+pass+"', '"+destination+"', '"+txtstat.getSelectedItem()+"', '"+pos.getSelectedItem()+"','"+postype.getText()+"','stake')")) 
                 {
                     try{
                          Files.copy(selectedFile.toPath(),new File(destination).toPath(),StandardCopyOption.REPLACE_EXISTING);

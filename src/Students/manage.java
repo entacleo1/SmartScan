@@ -36,7 +36,7 @@ public class manage extends javax.swing.JFrame {
      
     public void addLogs(String action){
         String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
-        boolean rowsInserted = db.insertData(insertQuery);
+        
     }
            
     
@@ -63,12 +63,10 @@ public class manage extends javax.swing.JFrame {
     public void tb() {
     try {
         
-        ResultSet res = db.getData("SELECT tbl_gradelvl.num, tbl_gradelvl.lvl, tbl_gradelvl.section,"
-                         + " COUNT(tbl_students.s_section) as studcount FROM tbl_gradelvl "
-                         + "LEFT JOIN tbl_students ON tbl_gradelvl.section = tbl_students.s_section "
-                         + "AND tbl_gradelvl.lvl = tbl_students.s_grade " 
-                         + "GROUP BY tbl_gradelvl.num, tbl_gradelvl.lvl, tbl_gradelvl.section "
-                         + "ORDER BY tbl_gradelvl.lvl, tbl_gradelvl.section");
+        ResultSet res = db.getData("SELECT grd.*, COUNT(stud.s_gradesec) AS studcount FROM tbl_gradelvl grd "
+                + "LEFT JOIN tbl_students stud ON grd.num = stud.s_gradesec "
+                + "GROUP BY grd.num "
+                + "ORDER BY grd.lvl");
         
         int overCount = 0;
         

@@ -15,13 +15,15 @@ import javax.swing.JTable;
  */
 public class TablePrinter {
 
-    private JTable tableToPrint;
-    private String title;
+    public JTable tableToPrint;
+    public String title;
 
     public TablePrinter(JTable tableToPrint, String title) {
         this.tableToPrint = tableToPrint;
         this.title = title;
     }
+
+  
 
     public void print() {
         MessageFormat header = new MessageFormat(title);

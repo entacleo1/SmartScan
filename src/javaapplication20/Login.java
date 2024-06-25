@@ -73,8 +73,12 @@ public class Login extends javax.swing.JFrame {
                 txttag.setForeground(new Color(80, 114, 123));
             }
             seconds--;
+            
+            if(seconds == 0){
+                ((Timer) e.getSource()).stop();
+            }
         });
-        count.setRepeats(true);
+        
         
         Timer timer = new Timer(16000, (ActionEvent e) -> {
             lbltime.hide();
@@ -84,6 +88,7 @@ public class Login extends javax.swing.JFrame {
             txtpass.setEnabled(true);
             count.stop();
         });
+        count.setRepeats(true);
         timer.setRepeats(false);
         
         

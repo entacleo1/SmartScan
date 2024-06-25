@@ -7,25 +7,22 @@ package javaapplication20;
 
 import admin.Dash;
 import config.dbconnector;
-import java.awt.Graphics;
+import config.smsSender;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.imageio.ImageIO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import user.user_dash;
@@ -48,7 +45,7 @@ public final class attendance extends javax.swing.JFrame {
     
     public attendance() {
         setUndecorated(true);
-        initComponents();  
+        initComponents();
         
         Action escAction = new AbstractAction() {
         @Override
@@ -88,6 +85,32 @@ public final class attendance extends javax.swing.JFrame {
       
         
     } 
+    
+     int seconds;
+   
+    public void tagTimer(){
+        seconds = 3;
+        
+        Timer count = new Timer(1000, (ActionEvent e) -> {
+            
+            tag.setEnabled(false);
+            seconds--;
+            
+        });
+        count.setRepeats(true);
+        
+        Timer timer = new Timer(4000, (ActionEvent e) -> {
+            
+            tag.setEnabled(true);
+            tag.requestFocus();
+            count.stop();
+        });
+        timer.setRepeats(false);
+        
+        
+        count.start();
+        timer.start();
+    }
     
       
    
@@ -287,7 +310,7 @@ public final class attendance extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -299,92 +322,143 @@ public final class attendance extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagActionPerformed
-        dbconnector db = new dbconnector();
-      
-        try{
-            ResultSet res = db.getData("SELECT * FROM tbl_students WHERE s_stat = 'Active' AND s_tag = '"+tag.getText()+"'");
-          
-            if(res.next()){
-                
-                String n = res.getString("s_name");
-                String l = res.getString("s_last"); 
-                String m = res.getString("s_mi");   
-                name.setText(l + ", " + n + " " + m);
-                
-                ImageIcon[] previousImages = new ImageIcon[3];
-                previousImages[0] = (ImageIcon) pic.getIcon();
-                previousImages[1] = (ImageIcon) pic1.getIcon();
-                previousImages[2] = (ImageIcon) pic2.getIcon();
-                
-                ImageIcon newImageIcon = ResizeImage(new ImageIcon(res.getString("s_pic")), pic);
-                pic.setIcon(newImageIcon);
-                
-                pic1.setIcon(ResizeImage(previousImages[0], pic1));
-                pic2.setIcon(ResizeImage(previousImages[1], pic2));
-                pic3.setIcon(ResizeImage(previousImages[2], pic3));
-                
-                grade.setText(res.getString("s_grade"));
-                id.setText(res.getString("s_id"));
-                tag.setText("");
-                pos.setText("Grade/Course:");
-                
+       dbconnector db = new dbconnector();
+       smsSender sms = new smsSender();
+       
+        try {
+              ResultSet res = db.getData("SELECT COALESCE(s_name,name) AS all_name,\n" +
+                                    "COALESCE(s_last,last) AS all_last,\n" +
+                                    "COALESCE(s_mi,mid) AS all_mid,\n" +
+                                    "COALESCE(s_pic,pic) AS all_pic,\n" +
+                                    "COALESCE(lvl,pos_type) AS all_type,\n" +
+                                    "COALESCE(s_id,id) AS all_id,\n" +
+                                    "COALESCE(s_tag,tag) AS all_tag, \n" +
+                                    "COALESCE(s_mobile) AS mobile, \n" +
+                                    "COALESCE(s_identification, identification) AS all_identity \n" +
+                                    "FROM (SELECT * FROM tbl_stake s LEFT OUTER JOIN tbl_students st ON s.id = st.s_id\n" +
+                                    "LEFT JOIN tbl_gradelvl grd ON grd.num = st.s_gradesec \n" +
+                                    "UNION\n" +
+                                    "SELECT * FROM tbl_stake s RIGHT OUTER JOIN tbl_students st ON s.id = st.s_id \n" +
+                                    "LEFT JOIN tbl_gradelvl grd ON grd.num = st.s_gradesec) AS combined_data\n" +
+                                    "WHERE s_tag= '"+tag.getText()+"' OR tag = '"+tag.getText()+"'");
 
-             
-                ResultSet record = db.getData("SELECT * FROM records WHERE reference_type = 'student' "
-                        + "AND reference_id = '" + res.getInt("s_id") + "' AND time_out IS NULL");
-                if (record.next()) {
-                    db.update("UPDATE records SET time_out = CURRENT_TIMESTAMP WHERE id = " + record.getInt("id") + "", false);
-                    attend.setText("Logout");
-                }
-                else {
-                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, pos_type, time_in, time_out, date) "
-                            + "VALUES('student', " + res.getInt("s_id") + ",'"+res.getString("s_tag")+"','"+res.getString("s_last")+"',"
-                            + "'"+res.getString("s_mi")+"','"+res.getString("s_name")+"','"+res.getString("s_grade")+"',"
-                            + " '"+res.getString("s_section")+"',CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
-                    attend.setText("Login");
-                }
-            }else{
-                ResultSet stakeRes = db.getData("SELECT * FROM tbl_stake WHERE status = 'Active' AND tag = '"+tag.getText()+"'");
-                
-                if (stakeRes.next()) {
-                    String n = stakeRes.getString("name");
-                    String l = stakeRes.getString("last"); 
-                    String m = stakeRes.getString("mid");
-
+                 if(res.next()){
+                    String n = res.getString("all_name");
+                    String l = res.getString("all_last"); 
+                    String m = res.getString("all_mid");   
                     name.setText(l + ", " + n + " " + m);
-                    
+
                     ImageIcon[] previousImages = new ImageIcon[3];
                     previousImages[0] = (ImageIcon) pic.getIcon();
                     previousImages[1] = (ImageIcon) pic1.getIcon();
                     previousImages[2] = (ImageIcon) pic2.getIcon();
-                    
-                    ImageIcon newImageIcon = ResizeImage(new ImageIcon(stakeRes.getString("pic")), pic);
+
+                    ImageIcon newImageIcon = ResizeImage(new ImageIcon(res.getString("all_pic")), pic);
                     pic.setIcon(newImageIcon);
-                    
+
                     pic1.setIcon(ResizeImage(previousImages[0], pic1));
                     pic2.setIcon(ResizeImage(previousImages[1], pic2));
                     pic3.setIcon(ResizeImage(previousImages[2], pic3));
+
+                    grade.setText(res.getString("all_type"));
+                    id.setText(res.getString("all_id"));
+                  
+                    String choose = res.getString("all_identity");
                     
-                    grade.setText(stakeRes.getString("pos_type"));
-                    id.setText(stakeRes.getString("id"));
-                    tag.setText("");
-                    pos.setText("Position:");
-                 
-              ResultSet record = db.getData("SELECT * FROM records WHERE reference_type = 'stake' "
-                        + "AND reference_id = '" + stakeRes.getInt("id") + "' AND time_out IS NULL");
-                if (record.next()) {
-                    db.update("UPDATE records SET time_out = CURRENT_TIMESTAMP WHERE id = " + record.getInt("id") + "", false);
-                    attend.setText("Logout");
-                }
-                else {
-                    db.insertData("INSERT INTO records(reference_type, reference_id, tags, last, mid, name, pos, pos_type, time_in, time_out, date) "
-                            + "VALUES('stake', " + stakeRes.getInt("id") + ",'"+stakeRes.getString("tag")+"','"+stakeRes.getString("last")+"',"
-                            + "'"+stakeRes.getString("mid")+"','"+stakeRes.getString("name")+"','"+stakeRes.getString("position")+"',"
-                            + " '"+stakeRes.getString("pos_type")+"',CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)");
-                    attend.setText("Login");
-                }
-                }
-                else {
+                    switch(choose){
+                        case "stake":
+                            
+                        ResultSet stakeRec = db.getData("SELECT * FROM tbl_records WHERE stake_id = '"+res.getString("all_id")+"' AND time_out IS NULL");
+                        
+                        if(stakeRec.next()){
+                            db.update("UPDATE tbl_records SET time_out = CURRENT_TIMESTAMP WHERE stake_id = '"+res.getString("all_id")+"'",false);
+                            attend.setText("Log Out");    
+                            tag.setText("");
+                        }else{
+                            db.insertData("INSERT INTO tbl_records (stake_id, date,time_in,time_out)"
+                                    + "VALUES('"+res.getString("all_id")+"',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,NULL)");
+                            attend.setText("Log In");
+                            
+                            Thread smsThread = new Thread(() -> {
+                                
+                            sms.initialize();
+                            
+                             try {
+                                 sms.sendSMS(res.getString("mobile"), "Student Log In");
+                             } catch (SQLException ex) {
+                                 Logger.getLogger(attendance.class.getName()).log(Level.SEVERE, null, ex);
+                             }
+                            sms.close();
+                            });
+                        
+                            smsThread.start();
+            
+                            
+                            
+                            tag.setText("");
+                        }
+                        pos.setText("Position");
+                        
+                        break;
+                        
+                        case "student":
+                        ResultSet studRec = db.getData("SELECT * FROM tbl_records WHERE student_id = '"+res.getString("all_id")+"' AND time_out IS NULL");
+                        
+                        if(studRec.next()){
+                            db.update("UPDATE tbl_records SET time_out = CURRENT_TIMESTAMP WHERE student_id = '"+res.getString("all_id")+"'",false);
+                            attend.setText("Log Out");
+                            
+                            Thread smsThread = new Thread(() -> {
+                                
+                            sms.initialize();
+                            
+                             try {
+                                 sms.sendSMS(res.getString("mobile"), "Student Log Out");
+                             } catch (SQLException ex) {
+                                 Logger.getLogger(attendance.class.getName()).log(Level.SEVERE, null, ex);
+                             }
+                             
+                           
+                             sms.close();
+                            
+                             });
+                             smsThread.start();
+                            
+                            
+                            
+                            tag.setText("");
+                            
+                        }else{
+                            db.insertData("INSERT INTO tbl_records (student_id, date,time_in,time_out)"
+                                    + "VALUES('"+res.getString("all_id")+"',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,NULL)");
+                            attend.setText("Log In");
+                            
+                            
+                            Thread smsThread = new Thread(() -> {
+                                
+                            sms.initialize();
+                            
+                             try {
+                                 sms.sendSMS(res.getString("mobile"), "Student Log In");
+                             } catch (SQLException ex) {
+                                 Logger.getLogger(attendance.class.getName()).log(Level.SEVERE, null, ex);
+                             }
+                            sms.close();
+                            });
+                        
+                            smsThread.start();
+                            
+                            
+                            
+                            tag.setText("");
+                        }
+                        pos.setText("Grade/Course");
+                            
+                        break;
+                    }
+                    
+
+                 }else{
                     id.setText("Not Existed");
                     tag.setText("Not Existed");
                     name.setText("Not Existed");
@@ -392,14 +466,12 @@ public final class attendance extends javax.swing.JFrame {
                     grade.setText("Not Existed");
                     id.setText("Not Existed");
                     tag.setText("");
-                    
-                }
-            }
-
-        }catch(SQLException e){
-            tag.setText("");
-            System.out.println(""+e.getLocalizedMessage());
-        } 
+                 }
+            
+            
+          } catch (SQLException ex) {
+            Logger.getLogger(attendance.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_tagActionPerformed
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
@@ -412,6 +484,7 @@ public final class attendance extends javax.swing.JFrame {
              
              break;
          case "dash":
+             
              
              Dash dsh = new Dash();
              dsh.setVisible(true);

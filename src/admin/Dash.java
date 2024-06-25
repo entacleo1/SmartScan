@@ -132,9 +132,6 @@ public class Dash extends javax.swing.JFrame {
         lbllogout1 = new javax.swing.JLabel();
         txtdate = new javax.swing.JLabel();
         txttime = new javax.swing.JLabel();
-        actlog = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        lbllogout8 = new javax.swing.JLabel();
         navmanage = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         lbllogout3 = new javax.swing.JLabel();
@@ -188,29 +185,6 @@ public class Dash extends javax.swing.JFrame {
         txttime.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         txttime.setText("    jLabel1");
         jPanel2.add(txttime, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 310, -1));
-
-        actlog.setBackground(new java.awt.Color(255, 0, 0));
-        actlog.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                actlogMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                actlogMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                actlogMouseExited(evt);
-            }
-        });
-        actlog.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/PIC/logs.png"))); // NOI18N
-        actlog.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 30, 30));
-
-        lbllogout8.setFont(new java.awt.Font("DialogInput", 0, 14)); // NOI18N
-        lbllogout8.setText("Activity Log");
-        actlog.add(lbllogout8, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 0, 140, 30));
-
-        jPanel2.add(actlog, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 310, 30));
 
         navmanage.setBackground(new java.awt.Color(255, 0, 0));
         navmanage.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -526,22 +500,6 @@ public class Dash extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_lblnameMouseClicked
 
-    private void actlogMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseClicked
-        logs prof = new logs();
-        activity.setVisible(true);
-        activity.add(prof).setVisible(true);
-
-    }//GEN-LAST:event_actlogMouseClicked
-
-    private void actlogMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseEntered
-          actlog.setBackground(nav);
-    }//GEN-LAST:event_actlogMouseEntered
-
-    private void actlogMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actlogMouseExited
-        actlog.setBackground(def);
-                                     
-    }//GEN-LAST:event_actlogMouseExited
-
     private void dashMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dashMouseClicked
       activity.setVisible(false);
     }//GEN-LAST:event_dashMouseClicked
@@ -591,7 +549,6 @@ public class Dash extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane activity;
-    private javax.swing.JPanel actlog;
     private javax.swing.JPanel dash;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -601,7 +558,6 @@ public class Dash extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbllogout1;
@@ -609,7 +565,6 @@ public class Dash extends javax.swing.JFrame {
     private javax.swing.JLabel lbllogout4;
     private javax.swing.JLabel lbllogout5;
     private javax.swing.JLabel lbllogout6;
-    private javax.swing.JLabel lbllogout8;
     private javax.swing.JLabel lbllogout9;
     public javax.swing.JLabel lblname;
     private javax.swing.JPanel navmanage;

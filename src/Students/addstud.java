@@ -43,7 +43,7 @@ public class addstud extends javax.swing.JFrame {
     }
     public void addLogs(String action){
         String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
-        boolean rowsInserted = db.insertData(insertQuery);
+
     }
     
     private void statshow(){
@@ -98,8 +98,8 @@ public class addstud extends javax.swing.JFrame {
 
     try {
         Statement st = db.connect.createStatement();
-        String sql = "SELECT * FROM tbl_students WHERE (s_stat = 'Pending' OR s_stat = 'Active') ORDER BY s_last";
-        ResultSet res = db.getData(sql);
+        ResultSet res = db.getData("SELECT stud.*, grd.* FROM tbl_students stud INNER JOIN tbl_gradelvl grd ON stud.s_gradesec = grd.num "
+                                   + "WHERE (s_stat = 'Pending' OR s_stat = 'Active') ORDER BY s_last");
 
         while (res.next()) {
 
@@ -108,8 +108,8 @@ public class addstud extends javax.swing.JFrame {
             String last = res.getString("s_last");
             String mid = res.getString("s_mi");
             String first = res.getString("s_name");
-            String grd = res.getString("s_grade");
-            String sec = res.getString("s_section");
+            String grd = res.getString("lvl");
+            String sec = res.getString("section");
             String dob = res.getString("s_bday");
             String sex = res.getString("s_gender"); 
             String mobile = res.getString("s_mobile");
@@ -345,7 +345,7 @@ public class addstud extends javax.swing.JFrame {
          
          String grd = gradelvl.getSelectedItem().toString();
             
-            String ser = "SELECT * FROM tbl_students WHERE s_grade LIKE '%" + grd + "%'";
+            String ser = "SELECT stud.* ,grd.* FROM tbl_students stud LEFT JOIN tbl_gradelvl grd ON stud.s_gradesec = grd.num WHERE grd.lvl LIKE '%" + grd + "%'";
             section.addItem("All Sections");
                  try {
         ResultSet res = db.getData(ser);
@@ -360,8 +360,8 @@ public class addstud extends javax.swing.JFrame {
                    String last = res.getString("s_last");
                    String mid = res.getString("s_mi");
                    String first = res.getString("s_name");
-                   String grade = res.getString("s_grade");
-                   String sec = res.getString("s_section");
+                   String grade = res.getString("lvl");
+                   String sec = res.getString("section");
                    String dob = res.getString("s_bday");
                    String sex = res.getString("s_gender"); 
                    String mobile = res.getString("s_mobile");
@@ -504,8 +504,8 @@ public class addstud extends javax.swing.JFrame {
 
     private void txtsearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtsearchKeyReleased
          String query = txtsearch.getText();
-         String searchQuery = "SELECT * FROM tbl_students WHERE (s_name LIKE '%" + query + "%' OR s_last LIKE '%" + query + "%' "
-                               + "OR s_tag LIKE '%"+query+"%') AND s_grade = '"+gradelvl.getSelectedItem()+"' ";
+         String searchQuery = "SELECT stud.*, grd.* FROM tbl_students stud LEFT JOIN tbl_gradelvl grd ON stud.s_gradesec = grd.num WHERE (s_name LIKE '%" + query + "%' OR s_last LIKE '%" + query + "%' "
+                               + "OR s_tag LIKE '%"+query+"%')";
           
     try {
         ResultSet res = db.getData(searchQuery);
@@ -520,8 +520,8 @@ public class addstud extends javax.swing.JFrame {
             String last = res.getString("s_last");
             String mid = res.getString("s_mi");
             String first = res.getString("s_name");
-            String grd = res.getString("s_grade");
-            String sec = res.getString("s_section");
+            String grd = res.getString("lvl");
+            String sec = res.getString("section");
             String dob = res.getString("s_bday");
             String sex = res.getString("s_gender"); 
             String mobile = res.getString("s_mobile");
@@ -546,10 +546,10 @@ public class addstud extends javax.swing.JFrame {
         String ser;
 
         if (section.getSelectedItem() != null && section.getSelectedItem().equals("All Sections")) {
-            ser = "SELECT * FROM tbl_students WHERE s_grade LIKE '%" + grd + "%'";
+            ser = "SELECT stud.* ,grd.* FROM tbl_students stud LEFT JOIN tbl_gradelvl grd ON stud.s_gradesec = grd.num WHERE grd.lvl LIKE '%" + grd + "%'";
         } else {
             String sec = section.getSelectedItem() != null ? section.getSelectedItem().toString() : "";
-            ser = "SELECT * FROM tbl_students WHERE s_section LIKE '%" + sec + "%' AND s_grade LIKE '%" + grd + "%'";
+            ser = "SELECT stud.* ,grd.* FROM tbl_students stud LEFT JOIN tbl_gradelvl grd ON stud.s_gradesec = grd.num WHERE grd.lvl LIKE '%" + grd + "%' AND grd.section = '%"+sec+"%'";
         }
    
         try {
@@ -564,8 +564,8 @@ public class addstud extends javax.swing.JFrame {
             String last = res.getString("s_last");
             String mid = res.getString("s_mi");
             String first = res.getString("s_name");
-            String grade = res.getString("s_grade");
-            String sec = res.getString("s_section");
+            String grade = res.getString("lvl");
+            String sec = res.getString("section");
             String dob = res.getString("s_bday");
             String sex = res.getString("s_gender");
             String mobile = res.getString("s_mobile");

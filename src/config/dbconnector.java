@@ -82,7 +82,7 @@ public class dbconnector {
                 if(row > 0 ){
                     JOptionPane.showMessageDialog(null,"Deleted");
                 }else{
-                    System.out.println("Failed");
+                    JOptionPane.showMessageDialog(null,"Cant Delete Data");
                 }
                 
             }catch(SQLException ex){

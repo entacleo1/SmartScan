@@ -20,6 +20,8 @@ import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -57,7 +59,7 @@ public class newstud extends javax.swing.JFrame {
     
        public void addLogs(String action){
         String insertQuery = "INSERT INTO act_logs (stake_id, action) VALUES ("+ses.getId()+", '"+action+"')";
-        boolean rowsInserted = con.insertData(insertQuery);
+        con.insertData(insertQuery);
     }
     
      private void id_increment(){
@@ -437,18 +439,21 @@ public class newstud extends javax.swing.JFrame {
     }//GEN-LAST:event_lblbackMouseClicked
 
     private void saveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveMouseClicked
+      
         switch (action) {
             case "Add":
                 try{
+                    ResultSet res = con.getData("SELECT num FROM tbl_gradelvl WHERE lvl = '"+txtgrade.getSelectedItem()+"' AND section = '"+txtsec.getSelectedItem()+"'");
                     
+                    if(res.next()){ 
                     String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
                     
                    
-                    String sql = "INSERT INTO tbl_students(s_tag, s_last, s_mi, s_name, s_section, s_grade, s_bday, s_gender, s_mobile, s_guard, s_add, s_pic, s_stat) "
+                    String sql = "INSERT INTO tbl_students(s_tag, s_last, s_mi, s_name,s_gradesec, s_bday, s_gender, s_mobile, s_guard, s_add, s_pic, s_stat,s_identification) "
                             + "VALUES ('"+txttag.getText()+"','"+txtlast.getText()+"','"+txtmid.getText()+"',"
-                            + "'"+txtname.getText()+"','"+txtsec.getSelectedItem()+"','"+txtgrade.getSelectedItem()+"',"
+                            + "'"+txtname.getText()+"','"+res.getString("num")+"',"
                             + "'"+bday+"','"+gender+"','"+txtmobile.getText()+"','"+txtguard.getText()+"',"
-                            + "'"+txtadd.getText()+"','"+destination+"','"+txtstat.getSelectedItem()+"')";
+                            + "'"+txtadd.getText()+"','"+destination+"','"+txtstat.getSelectedItem()+"','student')";
                     
                     Statement stmt = con.connect.createStatement();
                     int row = stmt.executeUpdate(sql);
@@ -474,6 +479,7 @@ public class newstud extends javax.swing.JFrame {
                     }else{
                         JOptionPane.showMessageDialog(null,"Null");
                     }
+                   }
                     
                 }catch(SQLException ex){
                     JOptionPane.showMessageDialog(null, ""+ex );
@@ -482,10 +488,17 @@ public class newstud extends javax.swing.JFrame {
                 break;
                 
             case "Update":
+                
+                try{
+                
+                ResultSet res = con.getData("SELECT num FROM tbl_gradelvl WHERE lvl = '"+txtgrade.getSelectedItem()+"' AND section = '"+txtsec.getSelectedItem()+"'");
+                
+                if(res.next()){
+   
                 String bday = ((JTextFieldDateEditor)txtbday.getDateEditor()).getText();
                 con.update("UPDATE tbl_students SET  s_tag  ='"+txttag.getText()+"', s_last ='"+txtlast.getText()+"', "
                             + "s_mi  ='"+txtmid.getText()+"', s_name  ='"+txtname.getText()+"',"
-                            + " s_section  ='"+txtsec.getSelectedItem()+"', s_grade  ='"+txtgrade.getSelectedItem()+"',"
+                            + " s_gradesec ='"+res.getString("num")+"',"
                             + " s_bday  ='"+bday+"', s_gender  ='"+gender+"',s_mobile  ='"+txtmobile.getText()+"', "
                             + "s_guard  ='"+txtguard.getText()+"', s_add  ='"+txtadd.getText()+"', "
                             + "s_pic = '"+destination+"', s_stat = '"+txtstat.getSelectedItem()+"'"
@@ -508,11 +521,17 @@ public class newstud extends javax.swing.JFrame {
                this.dispose();
                 
                 break;
-                
+              }
+            }catch(SQLException e){
+                        System.out.println("Fail");
+            }
+               
+            
             default:
                 JOptionPane.showMessageDialog(null,"No Action Selected");
                 break;
-        }
+                 
+        } 
      
     }//GEN-LAST:event_saveMouseClicked
 
@@ -550,8 +569,7 @@ public class newstud extends javax.swing.JFrame {
          
           try{
         Statement st = con.connect.createStatement();
-        ResultSet rs = st.executeQuery("SELECT section FROM tbl_gradelvl WHERE lvl = '"+txtgrade.getSelectedItem()+"'");
-       
+        ResultSet rs = st.executeQuery("SELECT * FROM tbl_gradelvl WHERE lvl = '"+txtgrade.getSelectedItem()+"'");
        
        
        while(rs.next()){
